@@ -56,20 +56,20 @@ fun HomeScreen(){
     )
 
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {/*ToDo*/},
-                containerColor = colorResource(R.color.sapphire),
-                modifier = Modifier.size(65.dp),
-                contentColor = Color.White
-            ) {
-
-                Icon(
-                    painter = painterResource(id = R.drawable.plus_icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(28.dp))
-            }
-        },
+//        floatingActionButton = {
+//            FloatingActionButton(
+//                onClick = {/*ToDo*/},
+//                containerColor = colorResource(R.color.sapphire),
+//                modifier = Modifier.size(65.dp),
+//                contentColor = Color.White
+//            ) {
+//
+//                Icon(
+//                    painter = painterResource(id = R.drawable.plus_icon),
+//                    contentDescription = null,
+//                    modifier = Modifier.size(28.dp))
+//            }
+//        },
 
         bottomBar = {
             BottomNavigation()
