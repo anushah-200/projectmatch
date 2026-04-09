@@ -31,7 +31,7 @@ import com.igdtuw.projectmatch.R
 fun WelcomeScreen(){
     Column(modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally){
-        Image(painter = painterResource(id = com.igdtuw.projectmatch.R.drawable.welcome),
+        Image(painter = painterResource(id = R.drawable.welcome),
             null,
             modifier = Modifier.size(600.dp)
         )
