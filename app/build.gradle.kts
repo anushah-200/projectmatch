@@ -1,9 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-
-    kotlin("plugin.serialization") version "2.3.20"
-
 }
 
 android {
@@ -65,8 +62,4 @@ dependencies {
 
 
     debugImplementation("androidx.compose.ui:ui-tooling:1.5.1")
-
-    // Jetpack Compose Integration
-    implementation("androidx.navigation:navigation-compose:2.10.0-alpha02")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
 }

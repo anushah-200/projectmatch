@@ -34,6 +34,7 @@ import com.igdtuw.projectmatch.presentation.bottomnavigation.BottomNavigation
 @Preview(showSystemUi = true)
 fun HomeScreen(){
 
+
     val chatData= listOf(
         ChatListModel(
             R.drawable.p1,
