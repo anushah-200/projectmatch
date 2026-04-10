@@ -52,7 +52,26 @@ fun HomeScreen(){
             "Hugo Clive",
             "9:00AM",
             "Hello"
+        ),
+        ChatListModel(
+            R.drawable.p4,
+            "Jiya Singh",
+            "3:00PM",
+            "Hello"
+        ),
+        ChatListModel(
+            R.drawable.p5,
+            "Vinayak Gupta",
+            "7:00AM",
+            "Hello"
+        ),
+        ChatListModel(
+            R.drawable.p6,
+            "David Simon",
+            "6:00PM",
+            "Hello"
         )
+
     )
 
     Scaffold(
