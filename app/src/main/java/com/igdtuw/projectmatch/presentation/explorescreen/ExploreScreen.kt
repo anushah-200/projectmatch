@@ -77,7 +77,7 @@ fun ExploreScreen() {
 //                )
 //            }
 //        },
-//        bottomBar = { BottomNavigation() },
+        bottomBar = { BottomNavigation() },
         topBar = { Topbar() }
 
     ) { innerPadding ->
