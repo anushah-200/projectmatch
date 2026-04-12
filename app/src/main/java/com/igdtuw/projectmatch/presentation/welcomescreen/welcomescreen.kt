@@ -25,8 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.igdtuw.projectmatch.R
-import com.igdtuw.projectmatch.presentation.navigationsystem.Routes
-
+import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
 fun WelcomeScreen(navHostController: NavHostController){
