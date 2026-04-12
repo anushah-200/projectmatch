@@ -66,7 +66,7 @@ fun Topbar(){
                 )
             } else {
                 Text(
-                    text = "Updates",
+                    text = "Explore",
                     fontSize = 28.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,

@@ -29,10 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.igdtuw.projectmatch.R
+import kotlin.time.ExperimentalTime
 
 @Composable
-@Preview(showSystemUi = true)
-fun Updatelistings(){
+@Preview(showSystemUi = false)
+fun AddListings(){
 
     Column {
         Row(
@@ -62,7 +63,7 @@ fun Updatelistings(){
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = "Update My Listings",
+                    text = "Add My Listings",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
@@ -84,33 +85,34 @@ fun Updatelistings(){
 
     }
 }
+
+data class ListingData( val image : Int , val name: String, val list: String)
+
 @Composable
-@Preview(showSystemUi = true)
-fun MyListings(){
-    Column(modifier = Modifier.padding(12.dp)) {
-        Text(
-            text = "My Listings :",
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp ,
-            color = colorResource(id = R.color.sapphire)
+
+fun Listings( listingData: ListingData){
+
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+    ) {
+        Image(
+            painter = painterResource(id = listingData.image),
+            contentDescription = null,
+            modifier = Modifier.size(60.dp).clip(shape = CircleShape).padding(4.dp),
+            contentScale = ContentScale.Crop
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Skill : Webdev",
-            fontSize = 14.sp,
-            color = Color.Black
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "Project : Project Map",
-            fontSize = 14.sp,
-            color = Color.Black
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "Team : Innovators",
-            fontSize = 14.sp,
-            color = Color.Black
-        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column() {
+            Text(text = listingData.name,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold)
+
+            Text(text = listingData.list,
+                fontSize = 14.sp,
+                color = Color.DarkGray,
+                fontWeight = FontWeight.Bold)
+
+        }
     }
 }

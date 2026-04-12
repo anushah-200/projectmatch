@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -42,22 +43,41 @@ import com.igdtuw.projectmatch.presentation.bottomnavigation.BottomNavigation
 @Preview(showSystemUi = true)
 fun ExploreScreen() {
 
-    val scrollState = rememberScrollState()
+        val scrollState = rememberScrollState()
+    val sampleListings = listOf(
+            ListingData(
+                image = R.drawable.p6,
+                name = "Mathew",
+                list = "#frontend #cpp #kotlin"
+            ),
+            ListingData(
+                 image = R.drawable.p5,
+                 name = "Anthony",
+                 list = "#backend #python"
+            ),
+            ListingData(
+                image = R.drawable.img,
+                name = "Sarah",
+                list = "#backend #ai and ml"
+        )
+    )
+
+
 
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /*TODO()*/ },
-                containerColor = colorResource(id = R.color.light_blue),
-                modifier = Modifier.size(65.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.plus_icon),
-                    contentDescription = null
-                )
-            }
-        },
-        bottomBar = { BottomNavigation() },
+//        floatingActionButton = {
+//            FloatingActionButton(
+//                onClick = { /*TODO()*/ },
+//                containerColor = colorResource(id = R.color.light_blue),
+//                modifier = Modifier.size(65.dp)
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.plus_icon),
+//                    contentDescription = null
+//                )
+//            }
+//        },
+//        bottomBar = { BottomNavigation() },
         topBar = { Topbar() }
 
     ) { innerPadding ->
@@ -70,96 +90,30 @@ fun ExploreScreen() {
                 .verticalScroll(scrollState)
         ) {
 
-            // --- My Details Section ---
+
             Text(
-                text = "My Details",
+                text = "My Listings:",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
             )
 
-            Updatelistings()
-            MyListings()
+            AddListings()
 
-            // --- Divider ---
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                thickness = 1.dp,
-                color = Color.LightGray
+
+            Text(
+                text = "Listings :",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
             )
 
-            // --- Teams Header ---
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Teams",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = Color.Black
-                )
-                IconButton(onClick = { /* TODO */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Team",
-                        tint = Color.Black
-                    )
-                }
+            sampleListings.forEach {
+                Listings(listingData = it)
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .background(colorResource(id = R.color.sapphire)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "I",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        color = Color.White
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Innovators",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = Color.Black
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "We are together to build, innovate and solve",
-                        fontSize = 14.sp,
-                        color = Color.Gray,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 1.dp,
-                color = Color.LightGray
-            )
         }
     }
 }
