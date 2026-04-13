@@ -50,10 +50,10 @@ fun UserRegistrationScreen(){
             Text(text = "ProjectMatch will need to verify your email ID")
             Spacer(modifier = Modifier.width(4.dp))
 
-            Text(text = "What's",color = colorResource(id = com.igdtuw.projectmatch.R.color.sapphire))
+
 
         }
-        Text(text = "my email ID",color = colorResource(id = com.igdtuw.projectmatch.R.color.sapphire))
+        Text(text = "What's my email ID?",color = colorResource(id = com.igdtuw.projectmatch.R.color.sapphire))
 
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
