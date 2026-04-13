@@ -59,7 +59,33 @@ fun ExploreScreen() {
                 image = R.drawable.img,
                 name = "Sarah",
                 list = "#backend #ai and ml"
-        )
+            ),
+            ListingData(
+                image = R.drawable.p2,
+                name = "Leonardo",
+                list = "#frontend #python #Node.js"
+            ),
+            ListingData(
+            image = R.drawable.p3,
+            name = "Robin",
+            list = "#frontend #cpp #kotlin"
+            ),
+            ListingData(
+            image = R.drawable.p6,
+            name = "Aarav",
+            list = "#frontend #cpp #kotlin"
+            ),
+            ListingData(
+            image = R.drawable.p4,
+            name = "Miranda",
+            list = "#frontend #cpp #kotlin"
+            ),
+            ListingData(
+                image = R.drawable.img,
+                name = "Ruzula",
+                list = "#frontend #cpp #kotlin"
+            )
+
     )
 
 
