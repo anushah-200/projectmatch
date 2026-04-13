@@ -17,7 +17,7 @@ fun NavigationSystem(){
 
     NavHost(startDestination = Routes.SplashScreen, navController = navcontroller){
         composable<Routes.SplashScreen> {
-            SplashScreen(navcontroller)
+            SplashScreen()
         }
 
         composable<Routes.WelcomeScreen> {
