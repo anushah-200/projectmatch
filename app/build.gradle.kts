@@ -1,9 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-
-    kotlin("plugin.serialization") version "2.3.20"
-
 }
 
 android {
@@ -50,6 +47,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -60,10 +58,9 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.5.1")
     implementation("androidx.compose.material3:material3:1.1.2")
 
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.5.1")
 
-    // Jetpack Compose Integration
-    implementation("androidx.navigation:navigation-compose:2.10.0-alpha02")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
+
+
+    debugImplementation("androidx.compose.ui:ui-tooling:1.5.1")
 }
