@@ -24,7 +24,7 @@ import com.igdtuw.projectmatch.presentation.navigation.Routes
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navHostController: NavHostController) {
+fun SplashScreen( navHostController: NavHostController) {
 
     LaunchedEffect(Unit) {
         delay(1000)

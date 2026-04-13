@@ -28,7 +28,7 @@ import com.igdtuw.projectmatch.R
 import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
-fun WelcomeScreen(navHostController: NavHostController){
+fun WelcomeScreen( navHostController: NavHostController){
     Column(modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally){
         Image(painter = painterResource(id = R.drawable.welcome),
