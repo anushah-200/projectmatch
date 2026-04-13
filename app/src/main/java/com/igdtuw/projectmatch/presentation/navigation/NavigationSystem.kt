@@ -1,6 +1,7 @@
 package com.igdtuw.projectmatch.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,16 +13,16 @@ import com.igdtuw.projectmatch.presentation.welcomescreen.WelcomeScreen
 
 
 @Composable
-fun NavigationSystem(){
+fun NavigationSystem(modifier: Modifier) {
     val navcontroller= rememberNavController()
 
     NavHost(startDestination = Routes.SplashScreen, navController = navcontroller){
         composable<Routes.SplashScreen> {
-            SplashScreen()
+            SplashScreen(navcontroller)
         }
 
         composable<Routes.WelcomeScreen> {
-            WelcomeScreen()
+            WelcomeScreen(navcontroller)
         }
 
         composable<Routes.UserRegistrationScreen> {
