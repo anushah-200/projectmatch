@@ -53,6 +53,8 @@ dependencies {
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.firebase.database)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
