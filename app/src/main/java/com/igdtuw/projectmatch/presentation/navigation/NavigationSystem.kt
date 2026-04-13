@@ -26,7 +26,7 @@ fun NavigationSystem(modifier: Modifier) {
         }
 
         composable<Routes.UserRegistrationScreen> {
-            UserRegistrationScreen()
+            UserRegistrationScreen(navcontroller)
         }
 
         composable<Routes.HomeScreen> {

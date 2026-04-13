@@ -33,12 +33,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.material.*
 import androidx.compose.ui.graphics.colorspace.ColorSpace
+import androidx.navigation.NavHostController
+import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
-@Preview(showSystemUi = true)
-fun UserRegistrationScreen(){
+fun UserRegistrationScreen( navHostController: NavHostController){
     var email by remember { mutableStateOf("") }
     var isValid by remember { mutableStateOf<Boolean?>(null) }
+
+    val isEmailValid = isValidEmail(email)
 
     Column(modifier = Modifier.fillMaxSize().padding(20.dp), horizontalAlignment =Alignment.CenterHorizontally ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -64,7 +67,13 @@ fun UserRegistrationScreen(){
             })
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {isValid=isValidEmail(email)},shape=RoundedCornerShape(6.dp), colors = ButtonDefaults.buttonColors(containerColor = colorResource(
+        Button(onClick = {
+            isValid = isEmailValid
+
+            if (isEmailValid) {
+                navHostController.navigate(Routes.HomeScreen)
+            }
+        },enabled = isEmailValid,shape=RoundedCornerShape(6.dp), colors = ButtonDefaults.buttonColors(containerColor = colorResource(
             R.color.sapphire))) {
             Text("Next", fontSize = 16.sp)
         }
