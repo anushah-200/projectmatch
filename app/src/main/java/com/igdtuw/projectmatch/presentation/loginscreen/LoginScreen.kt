@@ -1,4 +1,4 @@
-package com.igdtuw.projectmatch.presentation.userregistrationscreen
+package com.igdtuw.projectmatch.presentation.loginscreen
 
 import android.util.Patterns
 import androidx.compose.foundation.Image
@@ -43,6 +43,7 @@ import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 
 
+
 @Composable
 fun LoginScreen(navHostController: NavHostController) {
 
@@ -60,7 +61,7 @@ fun LoginScreen(navHostController: NavHostController) {
         verticalArrangement = Arrangement.Center
     ) {
 
-        // 🔥 Title
+
         Text(
             text = "Create your account",
             fontSize = 24.sp,
@@ -70,7 +71,6 @@ fun LoginScreen(navHostController: NavHostController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 📧 Email field
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -82,7 +82,6 @@ fun LoginScreen(navHostController: NavHostController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🔒 Password field
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -94,7 +93,6 @@ fun LoginScreen(navHostController: NavHostController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 🔘 Button
         Button(
             onClick = {
 
@@ -147,5 +145,3 @@ fun LoginScreen(navHostController: NavHostController) {
         }
     }
 }
-fun isValidEmail(email: String): Boolean
-{ return Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.endsWith("@igdtuw.ac.in") }

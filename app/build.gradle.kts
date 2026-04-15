@@ -1,4 +1,5 @@
 plugins {
+
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization")version "2.3.20"
@@ -55,6 +56,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.androidx.camera.camera2.pipe)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,5 +79,8 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.59.2")
     ksp("androidx.hilt:hilt-compiler:1.3.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
 
 }
+

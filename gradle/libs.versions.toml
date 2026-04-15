@@ -12,6 +12,7 @@ cameraCore = "1.6.0"
 navigationCompose = "2.9.7"
 firebase-bom = "34.12.0"
 googleGmsGoogleServices = "4.4.4"
+cameraCamera2Pipe = "1.6.0"
 
 
 [libraries]
@@ -34,6 +35,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-database = { module = "com.google.firebase:firebase-database" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
+androidx-camera-camera2-pipe = { group = "androidx.camera", name = "camera-camera2-pipe", version.ref = "cameraCamera2Pipe" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
