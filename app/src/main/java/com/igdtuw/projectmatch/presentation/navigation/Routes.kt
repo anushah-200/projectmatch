@@ -11,7 +11,7 @@ sealed class Routes {
     data object WelcomeScreen: Routes()
 
     @Serializable
-    data object UserRegistrationScreen: Routes()
+    data object LoginScreen: Routes()
 
     @Serializable
     data object HomeScreen: Routes()
@@ -19,8 +19,5 @@ sealed class Routes {
     @Serializable
     data object ExploreScreen: Routes()
 
-
-    @Serializable
-    data object LoginScreen: Routes()
 
 }
