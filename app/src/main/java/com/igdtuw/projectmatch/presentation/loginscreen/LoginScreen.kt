@@ -2,6 +2,7 @@ package com.igdtuw.projectmatch.presentation.loginscreen
 
 import android.util.Patterns
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,99 +50,72 @@ fun LoginScreen(navHostController: NavHostController) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf("") }
 
     val auth = FirebaseAuth.getInstance()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
 
+        Text("Create Account", fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
-        Text(
-            text = "Create your account",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.sapphire)
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("IGDTUW Email") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp)
+            label = { Text("IGDTUW Email") }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp)
+            label = { Text("Password") }
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Button(
-            onClick = {
+        Button(onClick = {
 
-                if (!email.endsWith("@igdtuw.ac.in")) {
-                    errorMessage = "Use your IGDTUW email"
-                    return@Button
-                }
+            if (!email.endsWith("@igdtuw.ac.in")) {
+                error = "Use IGDTUW email only"
+                return@Button
+            }
 
-                if (password.length < 6) {
-                    errorMessage = "Password must be at least 6 characters"
-                    return@Button
-                }
+            if (password.length < 6) {
+                error = "Password must be at least 6 characters"
+                return@Button
+            }
 
-                errorMessage = ""
-
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-
-                            navHostController.navigate(Routes.HomeScreen) {
-                                popUpTo(Routes.LoginScreen) { inclusive = true }
-                            }
-
-                        } else {
-                            errorMessage = task.exception?.message ?: "Something went wrong"
-                        }
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        navHostController.navigate(Routes.HomeScreen)
+                    } else {
+                        error = it.exception?.message ?: "Signup failed"
                     }
+                }
 
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(R.color.sapphire)
-            )
-        ) {
-            Text("Create Account", fontSize = 16.sp)
+        }) {
+            Text("Sign Up")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
+        Text(
+            text = "Already have an account? Login",
+            color = Color.Blue,
+            modifier = Modifier.clickable {
+                navHostController.navigate(Routes.UserRegistrationScreen)
+            }
+        )
 
-        if (errorMessage.isNotEmpty()) {
-            Text(
-                text = errorMessage,
-                color = Color.Red,
-                fontSize = 14.sp
-            )
+        if (error.isNotEmpty()) {
+            Text(error, color = Color.Red)
         }
     }
 }

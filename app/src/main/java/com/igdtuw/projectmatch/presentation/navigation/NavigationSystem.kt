@@ -9,6 +9,7 @@ import com.igdtuw.projectmatch.presentation.explorescreen.ExploreScreen
 import com.igdtuw.projectmatch.presentation.homescreen.HomeScreen
 import com.igdtuw.projectmatch.presentation.loginscreen.LoginScreen
 import com.igdtuw.projectmatch.presentation.splashscreen.SplashScreen
+import com.igdtuw.projectmatch.presentation.userregistrationscreen.UserRegistrationScreen
 import com.igdtuw.projectmatch.presentation.welcomescreen.WelcomeScreen
 
 @Composable
@@ -25,7 +26,7 @@ fun NavigationSystem(modifier: Modifier) {
         }
 
         composable<Routes.UserRegistrationScreen> {
-            LoginScreen(navcontroller)
+            UserRegistrationScreen(navcontroller)
         }
 
         composable<Routes.HomeScreen> {
@@ -35,6 +36,10 @@ fun NavigationSystem(modifier: Modifier) {
         composable<Routes.ExploreScreen> {
             ExploreScreen()
         }
+        composable<Routes.LoginScreen> {
+            LoginScreen(navcontroller)
+        }
+
 
 
 
