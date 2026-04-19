@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -37,21 +38,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.igdtuw.projectmatch.R
-import com.igdtuw.projectmatch.presentation.loginscreen.LoginScreen
-import com.igdtuw.projectmatch.presentation.navigation.Routes
+import com.igdtuw.projectmatch.presentation.authviewmodel.AuthViewModel
+
 
 
 
 
 @Composable
-fun UserProfileScreen(navHostController: NavHostController){
+fun UserProfileScreen(authViewModel: AuthViewModel){
     var name by remember { mutableStateOf("") }
     var skills by remember { mutableStateOf("") }
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -150,5 +150,11 @@ fun UserProfileScreen(navHostController: NavHostController){
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        Button(onClick = {
+            authViewModel.saveUserProfile(name,skills,bitmapImage)
+        },
+            colors = ButtonDefaults.buttonColors(colorResource(R.color.sapphire))) {
+            Text("Save")
+        }
     }
 }
