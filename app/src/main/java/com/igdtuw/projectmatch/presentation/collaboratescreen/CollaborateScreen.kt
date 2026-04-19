@@ -29,10 +29,10 @@ import com.igdtuw.projectmatch.presentation.bottomnavigation.BottomNavigation
 @Preview(showSystemUi = true)
 fun CollaborateScreen(){
     val sampleCollaboration = listOf(
-        Collaboration(name = "Group 1", memberCount = "15 members"),
-        Collaboration(name = "Group 2", memberCount = "11 members"),
-        Collaboration(name = "Group 3", memberCount = "9 members"),
-        Collaboration(name = "Group 4", memberCount = "13 members")
+        Collaboration(name = "AI Hackathon", memberCount = "15 members"),
+        Collaboration(name = "Mobile App Group", memberCount = "11 members"),
+        Collaboration(name = "Innovate and Learn", memberCount = "9 members"),
+        Collaboration(name = "Machine learning with AI", memberCount = "13 members")
     )
     Scaffold(topBar = {
         Box(modifier = Modifier.fillMaxWidth()){
