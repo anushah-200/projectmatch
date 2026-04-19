@@ -67,6 +67,21 @@ fun BottomNavigation(){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
+                    painter = painterResource(id = R.drawable.collaborate_icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Collaborate",
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
                     painter = painterResource(id = R.drawable.profile_icon),
                     contentDescription = null,
                     modifier = Modifier.size(28.dp)

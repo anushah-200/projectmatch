@@ -2,20 +2,22 @@ package com.igdtuw.projectmatch.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.igdtuw.projectmatch.presentation.authviewmodel.AuthViewModel
 import com.igdtuw.projectmatch.presentation.explorescreen.ExploreScreen
 import com.igdtuw.projectmatch.presentation.homescreen.HomeScreen
 import com.igdtuw.projectmatch.presentation.loginscreen.LoginScreen
+import com.igdtuw.projectmatch.presentation.signinscreen.SignInScreen
 import com.igdtuw.projectmatch.presentation.splashscreen.SplashScreen
-import com.igdtuw.projectmatch.presentation.userregistrationscreen.UserRegistrationScreen
 import com.igdtuw.projectmatch.presentation.welcomescreen.WelcomeScreen
 
 @Composable
 fun NavigationSystem(modifier: Modifier) {
     val navcontroller= rememberNavController()
-
+    val authViewModel: AuthViewModel= viewModel()
     NavHost(startDestination = Routes.SplashScreen, navController = navcontroller){
         composable<Routes.SplashScreen> {
             SplashScreen(navcontroller)
@@ -25,8 +27,8 @@ fun NavigationSystem(modifier: Modifier) {
             WelcomeScreen(navcontroller)
         }
 
-        composable<Routes.UserRegistrationScreen> {
-            UserRegistrationScreen(navcontroller)
+        composable<Routes.LoginScreen> {
+            LoginScreen(navcontroller, authViewModel = authViewModel)
         }
 
         composable<Routes.HomeScreen> {
@@ -36,8 +38,8 @@ fun NavigationSystem(modifier: Modifier) {
         composable<Routes.ExploreScreen> {
             ExploreScreen()
         }
-        composable<Routes.LoginScreen> {
-            LoginScreen(navcontroller)
+        composable<Routes.SignInScreen> {
+            SignInScreen(navcontroller, authViewModel = authViewModel)
         }
 
 

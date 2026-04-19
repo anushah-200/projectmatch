@@ -50,7 +50,7 @@ fun WelcomeScreen( navHostController: NavHostController){
 
         }
         Spacer(modifier= Modifier.height(24.dp))
-        Button(onClick = {navHostController.navigate(Routes.UserRegistrationScreen)},
+        Button(onClick = {navHostController.navigate(Routes.LoginScreen)},
             modifier= Modifier.size(280.dp,43.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id =R.color.sapphire)) )
