@@ -1,6 +1,8 @@
 package com.igdtuw.projectmatch.presentation.authviewmodel
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -11,38 +13,61 @@ import com.google.firebase.auth.GoogleAuthProvider
 class AuthViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
 
+    private val _authState= MutableLiveData<AuthState>()
+    val authState: LiveData<AuthState> get()= _authState
 
-    fun getGoogleClient(context: Context): GoogleSignInClient {
-        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("1:148442190177:android:1ff11efac210aad81f7520")
-            .requestEmail()
-            .build()
-
-        return GoogleSignIn.getClient(context, googleSignInOptions)
+    init {
+        checkAuthStatus()
     }
-    fun firebaseAuthWithGoogle(
-        idToken: String,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit
-    ) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
 
-        auth.signInWithCredential(credential)
+    fun checkAuthStatus(){
+        if (auth.currentUser==null){
+            _authState.value= AuthState.Unauthenticated
+        }else{
+            _authState.value=AuthState.Authenticated
+        }
+    }
+    fun login(email: String,password: String){
+        if (email.isEmpty() || password.isEmpty()){
+            _authState.value= AuthState.Error("Email or Password can't be empty")
+        }
+        _authState.value= AuthState.Loading
+        auth.signInWithEmailAndPassword(email,password)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-
-                    val email = auth.currentUser?.email ?: ""
-
-                    if (email.endsWith("@igdtuw.ac.in")) {
-                        onSuccess()
-                    } else {
-                        auth.signOut()
-                        onError("Use IGDTUW email only")
-                    }
-
-                } else {
-                    onError("Authentication failed")
+                if (task.isSuccessful){
+                    _authState.value= AuthState.Authenticated
+                }else{
+                    _authState.value= AuthState.Error(task.exception?.message?:"Something went wrong")
                 }
             }
     }
+
+    fun signin(email: String,password: String){
+        if (email.isEmpty() || password.isEmpty()){
+            _authState.value= AuthState.Error("Email or Password can't be empty")
+        }
+        _authState.value= AuthState.Loading
+        auth.createUserWithEmailAndPassword(email,password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    _authState.value= AuthState.Authenticated
+                }else{
+                    _authState.value= AuthState.Error(task.exception?.message?:"Something went wrong")
+                }
+            }
+    }
+
+    fun signout(){
+        auth.signOut()
+        _authState.value= AuthState.Unauthenticated
+    }
+
+
+}
+
+sealed class AuthState{
+    object Authenticated: AuthState()
+    object Unauthenticated: AuthState()
+    object Loading: AuthState()
+    data class Error(val message: String): AuthState()
 }

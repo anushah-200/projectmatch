@@ -14,12 +14,16 @@ sealed class Routes {
     data object LoginScreen: Routes()
 
     @Serializable
+    data object SignInScreen: Routes()
+
+    @Serializable
     data object HomeScreen: Routes()
 
     @Serializable
     data object ExploreScreen: Routes()
 
     @Serializable
-    data object UserRegistrationScreen: Routes()
+    data object CollaborateScreen: Routes()
+
 
 }
