@@ -13,7 +13,7 @@ import com.igdtuw.projectmatch.presentation.loginscreen.LoginScreen
 import com.igdtuw.projectmatch.presentation.signinscreen.SignInScreen
 import com.igdtuw.projectmatch.presentation.splashscreen.SplashScreen
 import com.igdtuw.projectmatch.presentation.welcomescreen.WelcomeScreen
-
+import com.igdtuw.projectmatch.presentation.profile.UserProfileScreen
 @Composable
 fun NavigationSystem(modifier: Modifier) {
     val navcontroller= rememberNavController()
@@ -24,7 +24,7 @@ fun NavigationSystem(modifier: Modifier) {
         }
 
         composable<Routes.WelcomeScreen> {
-            WelcomeScreen(navcontroller)
+            WelcomeScreen(navcontroller,authViewModel = authViewModel)
         }
 
         composable<Routes.LoginScreen> {
@@ -40,6 +40,9 @@ fun NavigationSystem(modifier: Modifier) {
         }
         composable<Routes.SignInScreen> {
             SignInScreen(navcontroller, authViewModel = authViewModel)
+        }
+        composable<Routes.UserProfileScreen> {
+            UserProfileScreen(navcontroller, authViewModel = authViewModel)
         }
 
 

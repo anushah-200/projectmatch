@@ -25,10 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.igdtuw.projectmatch.R
+import com.igdtuw.projectmatch.presentation.authviewmodel.AuthViewModel
 import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
-fun WelcomeScreen( navHostController: NavHostController){
+fun WelcomeScreen( navHostController: NavHostController,authViewModel: AuthViewModel){
     Column(modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally){
         Image(painter = painterResource(id = R.drawable.welcome),
@@ -50,7 +51,8 @@ fun WelcomeScreen( navHostController: NavHostController){
 
         }
         Spacer(modifier= Modifier.height(24.dp))
-        Button(onClick = {navHostController.navigate(Routes.LoginScreen)},
+        Button(onClick = {authViewModel.resetToUnauthenticated()
+            navHostController.navigate(Routes.LoginScreen)},
             modifier= Modifier.size(280.dp,43.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id =R.color.sapphire)) )

@@ -3,6 +3,7 @@ package com.igdtuw.projectmatch.presentation.signinscreen
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,93 +29,211 @@ import androidx.navigation.NavHostController
 import com.igdtuw.projectmatch.presentation.viewmodel.AuthState
 import com.igdtuw.projectmatch.presentation.viewmodel.AuthViewModel
 import com.igdtuw.projectmatch.presentation.navigation.Routes
-
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.igdtuw.projectmatch.R
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.modifier.modifierLocalOf
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.size
 
 
 
 @Composable
-fun SignInScreen(navHostController: NavHostController,authViewModel: AuthViewModel) {
+fun SignInScreen(navHostController: NavHostController, authViewModel: AuthViewModel) {
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf("") }
+    val authState = authViewModel.authState.observeAsState()
+    val context = LocalContext.current
+    var hasAttemptedSignIn by remember { mutableStateOf(false) }
 
-    val authState=authViewModel.authState.observeAsState()
-    val context= LocalContext.current
     LaunchedEffect(authState.value) {
-        when(authState.value){
-            is AuthState.Authenticated -> navHostController.navigate(Routes.HomeScreen)
-            is AuthState.Error -> Toast.makeText(context,(authState.value as AuthState.Error).message,
-                Toast.LENGTH_SHORT).show()
+        when (authState.value) {
+            is AuthState.Authenticated -> {
+                if (hasAttemptedSignIn) {
+                    navHostController.navigate(Routes.UserProfileScreen)
+                }
+            }
+            is AuthState.Error -> Toast.makeText(
+                context,
+                (authState.value as AuthState.Error).message,
+                Toast.LENGTH_SHORT
+            ).show()
             else -> Unit
         }
     }
 
-//    val auth = FirebaseAuth.getInstance()
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-
-        Text("Create Account", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("IGDTUW Email") }
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") }
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(onClick = {
-
-            if (!email.endsWith("@igdtuw.ac.in")) {
-                error = "Use IGDTUW email only"
-                return@Button
-            }
-
-            if (password.length < 6) {
-                error = "Password must be at least 6 characters"
-                return@Button
-            }
-            authViewModel.signin(email,password)
-//            auth.createUserWithEmailAndPassword(email, password)
-//                .addOnCompleteListener {
-//                    if (it.isSuccessful) {
-//                        navHostController.navigate(Routes.HomeScreen)
-//                    } else {
-//                        error = it.exception?.message ?: "Signup failed"
-//                    }
-//                }
-
+    SignInScreenContent(
+        authState = authState.value,
+        onSignIn = { email, password ->
+            hasAttemptedSignIn = true
+            authViewModel.signin(email, password)
         },
-            enabled = authState.value!= AuthState.Loading) {
-            Text("Sign Up")
-        }
+        onNavigateToLogin = { navHostController.navigate(Routes.LoginScreen) }
+    )
+}
 
-        Spacer(modifier = Modifier.height(10.dp))
+@Composable
+fun SignInScreenContent(
+    authState: AuthState?,
+    onSignIn: (String, String) -> Unit,
+    onNavigateToLogin: () -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf("") }
 
-        Text(
-            text = "Already have an account? Login",
-            color = Color.Blue,
-            modifier = Modifier.clickable {
-                navHostController.navigate(Routes.LoginScreen)
-            }
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        Image(
+            painter = painterResource(id = R.drawable.wallpaper),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
         )
 
-        if (error.isNotEmpty()) {
-            Text(error, color = Color.Red)
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White.copy(alpha = 0.3f))
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Text(
+                text = "Create Account",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(R.color.sapphire),
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
+                    .background(Color.White.copy(alpha = 0.75f), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+            )
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("IGDTUW Email", color = colorResource(R.color.sapphire)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = colorResource(R.color.sapphire),
+                    unfocusedBorderColor = colorResource(R.color.sapphire),
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                )
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password", color = colorResource(R.color.sapphire)) },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = colorResource(R.color.sapphire),
+                    unfocusedBorderColor = colorResource(R.color.sapphire),
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                )
+            )
+
+            if (error.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = error,
+                    color = Color.Red,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .background(Color.White.copy(alpha = 0.75f), RoundedCornerShape(6.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Button(
+                onClick = {
+                    if (!email.endsWith("@igdtuw.ac.in")) {
+                        error = "Use IGDTUW email only"
+                        return@Button
+                    }
+                    if (password.length < 6) {
+                        error = "Password must be at least 6 characters"
+                        return@Button
+                    }
+                    onSignIn(email, password)
+                },
+                enabled = authState != AuthState.Loading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.sapphire),
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                if (authState == AuthState.Loading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Sign Up", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White.copy(alpha = 0.7f), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    text = "Already have an account? Login",
+                    color = colorResource(R.color.sapphire),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
+                    modifier = Modifier.clickable { onNavigateToLogin() }
+                )
+            }
         }
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun SignInScreenPreview() {
+    SignInScreenContent(
+        authState = null,
+        onSignIn = { _, _ -> },
+        onNavigateToLogin = {}
+    )
 }
