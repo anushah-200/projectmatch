@@ -28,8 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
-import com.igdtuw.projectmatch.presentation.authviewmodel.AuthState
-import com.igdtuw.projectmatch.presentation.authviewmodel.AuthViewModel
+import com.igdtuw.projectmatch.presentation.viewmodel.AuthState
+import com.igdtuw.projectmatch.presentation.viewmodel.AuthViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
