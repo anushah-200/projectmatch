@@ -34,7 +34,7 @@ fun ChatDesign(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = chatListModel.image),
+            painter = painterResource(id = R.drawable.user_placeholder),
             contentDescription = null,
             modifier = Modifier.size(60.dp).clip(shape = CircleShape),
             contentScale = ContentScale.Crop
@@ -47,18 +47,18 @@ fun ChatDesign(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = chatListModel.name,
+                    text = "Unknown",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = chatListModel.time,
+                    text = "10:00 A.M.",
                     color = Color.Gray
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = chatListModel.message,
+                text = "Hello",
                 color = Color.Gray,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold
