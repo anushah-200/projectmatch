@@ -61,7 +61,7 @@ fun SignInScreen(navHostController: NavHostController, authViewModel: AuthViewMo
         when (authState.value) {
             is AuthState.Authenticated -> {
                 if (hasAttemptedSignIn) {
-                    navHostController.navigate(Routes.HomeScreen)
+                    navHostController.navigate(Routes.UserProfileScreen)
                 }
             }
             is AuthState.Error -> Toast.makeText(

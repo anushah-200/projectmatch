@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.google.firebase.Firebase
@@ -51,7 +52,7 @@ import com.igdtuw.projectmatch.presentation.authviewmodel.AuthViewModel
 
 
 @Composable
-fun UserProfileScreen(authViewModel: AuthViewModel){
+fun UserProfileScreen(navHostController: NavHostController,authViewModel: AuthViewModel){
     var name by remember { mutableStateOf("") }
     var skills by remember { mutableStateOf("") }
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
