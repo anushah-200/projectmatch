@@ -35,45 +35,45 @@ import com.igdtuw.projectmatch.presentation.bottomnavigation.BottomNavigation
 fun HomeScreen(){
 
 
-    val chatData= listOf(
-        ChatListModel(
-            R.drawable.p1,
-            "Susan Connor",
-            "10:00AM",
-            "Hello"
-        ),
-        ChatListModel(
-            R.drawable.p2,
-            "Aston Hawk",
-            "7:00AM",
-            "Hi"
-        ),
-        ChatListModel(
-            R.drawable.p3,
-            "Hugo Clive",
-            "9:00AM",
-            "Hello"
-        ),
-        ChatListModel(
-            R.drawable.p4,
-            "Jiya Singh",
-            "3:00PM",
-            "Hello"
-        ),
-        ChatListModel(
-            R.drawable.p5,
-            "Vinayak Gupta",
-            "7:00AM",
-            "Hello"
-        ),
-        ChatListModel(
-            R.drawable.p6,
-            "David Simon",
-            "6:00PM",
-            "Hello"
-        )
-
-    )
+//    val chatData= listOf(
+//        ChatListModel(
+//            R.drawable.p1,
+//            "Susan Connor",
+//            "10:00AM",
+//            "Hello"
+//        ),
+//        ChatListModel(
+//            R.drawable.p2,
+//            "Aston Hawk",
+//            "7:00AM",
+//            "Hi"
+//        ),
+//        ChatListModel(
+//            R.drawable.p3,
+//            "Hugo Clive",
+//            "9:00AM",
+//            "Hello"
+//        ),
+//        ChatListModel(
+//            R.drawable.p4,
+//            "Jiya Singh",
+//            "3:00PM",
+//            "Hello"
+//        ),
+//        ChatListModel(
+//            R.drawable.p5,
+//            "Vinayak Gupta",
+//            "7:00AM",
+//            "Hello"
+//        ),
+//        ChatListModel(
+//            R.drawable.p6,
+//            "David Simon",
+//            "6:00PM",
+//            "Hello"
+//        )
+//
+//    )
 
     Scaffold(
 //        floatingActionButton = {
@@ -130,11 +130,11 @@ fun HomeScreen(){
             }
             HorizontalDivider()
 
-            LazyColumn() {
-                items(chatData){
-                        chatItem -> ChatDesign(chatListModel = chatItem)
-                }
-            }
+//            LazyColumn() {
+//                items(chatData){
+//                        chatItem -> ChatDesign(chatListModel = chatItem)
+//                }
+//            }
 
         }
 

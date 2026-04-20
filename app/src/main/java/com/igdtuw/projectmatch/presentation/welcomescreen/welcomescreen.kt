@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.igdtuw.projectmatch.R
-import com.igdtuw.projectmatch.presentation.authviewmodel.AuthViewModel
+import com.igdtuw.projectmatch.presentation.viewmodel.AuthViewModel
 import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
