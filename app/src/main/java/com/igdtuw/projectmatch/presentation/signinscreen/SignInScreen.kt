@@ -25,9 +25,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.FirebaseAuth
-import com.igdtuw.projectmatch.presentation.authviewmodel.AuthState
-import com.igdtuw.projectmatch.presentation.authviewmodel.AuthViewModel
+import com.igdtuw.projectmatch.presentation.viewmodel.AuthState
+import com.igdtuw.projectmatch.presentation.viewmodel.AuthViewModel
 import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 

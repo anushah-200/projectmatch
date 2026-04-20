@@ -39,12 +39,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.igdtuw.projectmatch.R
-import com.igdtuw.projectmatch.presentation.authviewmodel.AuthViewModel
+import com.igdtuw.projectmatch.presentation.viewmodel.AuthViewModel
 
 
 

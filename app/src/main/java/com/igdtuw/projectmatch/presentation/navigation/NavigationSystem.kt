@@ -6,7 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.igdtuw.projectmatch.presentation.authviewmodel.AuthViewModel
+import com.igdtuw.projectmatch.presentation.viewmodel.AuthViewModel
 import com.igdtuw.projectmatch.presentation.explorescreen.ExploreScreen
 import com.igdtuw.projectmatch.presentation.homescreen.HomeScreen
 import com.igdtuw.projectmatch.presentation.loginscreen.LoginScreen

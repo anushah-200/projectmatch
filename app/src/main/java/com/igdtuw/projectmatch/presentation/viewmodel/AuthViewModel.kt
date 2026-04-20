@@ -1,16 +1,11 @@
-package com.igdtuw.projectmatch.presentation.authviewmodel
+package com.igdtuw.projectmatch.presentation.viewmodel
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 import com.igdtuw.projectmatch.models.EmailAuthUser
 import java.io.ByteArrayOutputStream
