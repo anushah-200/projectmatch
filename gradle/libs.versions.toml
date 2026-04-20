@@ -14,6 +14,7 @@ firebase-bom = "34.12.0"
 googleGmsGoogleServices = "4.4.4"
 cameraCamera2Pipe = "1.6.0"
 runtimeLivedata = "1.10.6"
+foundation = "1.10.6"
 
 
 [libraries]
@@ -38,6 +39,7 @@ firebase-database = { module = "com.google.firebase:firebase-database" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 androidx-camera-camera2-pipe = { group = "androidx.camera", name = "camera-camera2-pipe", version.ref = "cameraCamera2Pipe" }
 androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

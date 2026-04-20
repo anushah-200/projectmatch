@@ -26,15 +26,20 @@ class AuthViewModel : ViewModel() {
     }
 
     fun checkAuthStatus(){
+        _authState.value = AuthState.InitialLoading
         if (auth.currentUser==null){
             _authState.value= AuthState.Unauthenticated
         }else{
             _authState.value=AuthState.Authenticated
         }
     }
+    fun resetToUnauthenticated() {
+        _authState.value = AuthState.Unauthenticated
+    }
     fun login(email: String,password: String){
         if (email.isEmpty() || password.isEmpty()){
             _authState.value= AuthState.Error("Email or Password can't be empty")
+            return
         }
         _authState.value= AuthState.Loading
         auth.signInWithEmailAndPassword(email,password)
@@ -50,6 +55,7 @@ class AuthViewModel : ViewModel() {
     fun signin(email: String,password: String){
         if (email.isEmpty() || password.isEmpty()){
             _authState.value= AuthState.Error("Email or Password can't be empty")
+            return
         }
         _authState.value= AuthState.Loading
         auth.createUserWithEmailAndPassword(email,password)
@@ -57,7 +63,12 @@ class AuthViewModel : ViewModel() {
                 if (task.isSuccessful){
                     _authState.value= AuthState.Authenticated
                 }else{
-                    _authState.value= AuthState.Error(task.exception?.message?:"Something went wrong")
+                    val message = if (task.exception?.message?.contains("already in use") == true) {
+                        "An account with this email already exists. Please login instead."
+                    } else {
+                        task.exception?.message ?: "Something went wrong"
+                    }
+                    _authState.value = AuthState.Error(message)
                 }
             }
     }
@@ -102,5 +113,6 @@ sealed class AuthState{
     object Authenticated: AuthState()
     object Unauthenticated: AuthState()
     object Loading: AuthState()
+    object InitialLoading: AuthState()
     data class Error(val message: String): AuthState()
 }

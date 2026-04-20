@@ -24,7 +24,7 @@ fun NavigationSystem(modifier: Modifier) {
         }
 
         composable<Routes.WelcomeScreen> {
-            WelcomeScreen(navcontroller)
+            WelcomeScreen(navcontroller,authViewModel = authViewModel)
         }
 
         composable<Routes.LoginScreen> {
