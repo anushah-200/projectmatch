@@ -136,7 +136,7 @@ fun UserProfileScreen(navHostController: NavHostController,authViewModel: AuthVi
 
         TextField(
             value = skills,
-            onValueChange = {name=it},
+            onValueChange = {skills=it},
             label = {
                 Text("Skills")
             },
