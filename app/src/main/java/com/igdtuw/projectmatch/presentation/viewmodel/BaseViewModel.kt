@@ -181,6 +181,14 @@ class BaseViewModel: ViewModel() {
                 }
             })
     }
+    fun addChat(user: ChatListModel) {
+        val currentUserId = auth.currentUser?.uid ?: return
+        val otherUserId = user.userId ?: return
+        db.child("messages")
+            .child(currentUserId)
+            .child(otherUserId)
+            .setValue(true)
+    }
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun decodeBase64toBitmap(base64Image: String): Bitmap?{
@@ -191,6 +199,7 @@ class BaseViewModel: ViewModel() {
             null
         }
     }
+
 
     @OptIn(ExperimentalEncodingApi::class)
     fun base64ToBitmap(base64String: String): Bitmap?{

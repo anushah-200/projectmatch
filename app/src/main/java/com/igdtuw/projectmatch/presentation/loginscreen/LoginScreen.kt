@@ -57,19 +57,26 @@ fun LoginScreen(navHostController: NavHostController, authViewModel: AuthViewMod
     val context = LocalContext.current
     var hasAttemptedLogin by remember { mutableStateOf(false) }
 
+    // Reset state when LoginScreen first opens
+    LaunchedEffect(Unit) {
+        authViewModel.resetToUnauthenticated()
+    }
+
     LaunchedEffect(authState.value) {
         when (authState.value) {
             is AuthState.Authenticated -> {
-                if (hasAttemptedLogin) {
-                    navHostController.navigate(Routes.HomeScreen)
+                if (hasAttemptedLogin) {  // only navigate after user actually clicks login
+                    navHostController.navigate(Routes.HomeScreen) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             }
             is AuthState.Error -> Toast.makeText(
                 context,
                 (authState.value as AuthState.Error).message,
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_LONG
             ).show()
-            is AuthState.InitialLoading -> Unit
             else -> Unit
         }
     }
@@ -83,7 +90,6 @@ fun LoginScreen(navHostController: NavHostController, authViewModel: AuthViewMod
         onNavigateToSignUp = { navHostController.navigate(Routes.SignInScreen) }
     )
 }
-
 
 @Composable
 fun LoginScreenContent(

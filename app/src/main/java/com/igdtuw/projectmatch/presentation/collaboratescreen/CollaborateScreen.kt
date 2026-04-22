@@ -22,12 +22,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.igdtuw.projectmatch.R
 import com.igdtuw.projectmatch.presentation.bottomnavigation.BottomNavigation
+import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
-@Preview(showSystemUi = true)
-fun CollaborateScreen(){
+
+fun CollaborateScreen(
+    navHostController: NavHostController
+){
     val sampleCollaboration = listOf(
         Collaboration(name = "AI Hackathon", memberCount = "15 members"),
         Collaboration(name = "Mobile App Group", memberCount = "11 members"),
@@ -48,8 +52,19 @@ fun CollaborateScreen(){
                 HorizontalDivider()
             }
         }
-    }, bottomBar = {
-        BottomNavigation()
+    },  bottomBar = {
+        BottomNavigation(
+            navHostController = navHostController,
+            selectedItem = 0,
+            onClick = { index ->
+                when (index) {
+                    0 -> navHostController.navigate(Routes.HomeScreen)
+                    1 -> navHostController.navigate(Routes.ExploreScreen)
+                    2 -> navHostController.navigate(Routes.CollaborateScreen)
+                    3 -> navHostController.navigate(Routes.UserProfileScreen)
+                }
+            }
+        )
     }) {
         Column(modifier = Modifier.padding(it)) {
 
