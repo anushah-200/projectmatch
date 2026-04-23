@@ -1,170 +1,93 @@
 package com.igdtuw.projectmatch.presentation.collaboratescreen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import com.igdtuw.projectmatch.R
 import com.igdtuw.projectmatch.presentation.bottomnavigation.BottomNavigation
 import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
+
 fun CollaborateScreen(
     navHostController: NavHostController
-) {
-
-    val dbRef = FirebaseDatabase.getInstance().getReference("collaborations")
-    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "guest"
-
-    var collaborations by remember { mutableStateOf(listOf<Collaboration>()) }
-
-    var showDialog by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf("") }
-
-    // 🔄 REAL-TIME UPDATES
-    LaunchedEffect(Unit) {
-        dbRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                val list = mutableListOf<Collaboration>()
-
-                for (child in snapshot.children) {
-                    val collab = child.getValue(Collaboration::class.java)
-
-                    if (collab != null) {
-                        list.add(
-                            collab.copy(id = child.key ?: "")
-                        )
-                    }
-                }
-
-                collaborations = list
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    Scaffold(
-        topBar = {
+){
+    val sampleCollaboration = listOf(
+        Collaboration(name = "AI Hackathon", memberCount = "15 members"),
+        Collaboration(name = "Mobile App Group", memberCount = "11 members"),
+        Collaboration(name = "Innovate and Learn", memberCount = "9 members"),
+        Collaboration(name = "Machine learning with AI", memberCount = "13 members")
+    )
+    Scaffold(topBar = {
+        Box(modifier = Modifier.fillMaxWidth()){
             Column {
-                Text(
-                    text = "Collaborate",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(12.dp)
-                )
+                Row{
+                    Text(text="Collaborate",
+                        fontSize = 32.sp,
+                        color = Color.Black,
+                        fontWeight= FontWeight.Bold,
+                        modifier = Modifier.padding(start = 5.dp, top = 25.dp)
+                    )
+                }
                 HorizontalDivider()
             }
-        },
-        bottomBar = {
-            BottomNavigation(
-                navHostController = navHostController,
-                selectedItem = 2,
-                onClick = { index ->
-                    when (index) {
-                        0 -> navHostController.navigate(Routes.HomeScreen)
-                        1 -> navHostController.navigate(Routes.ExploreScreen)
-                        2 -> navHostController.navigate(Routes.CollaborateScreen)
-                        3 -> navHostController.navigate(Routes.UserProfileScreen)
-                    }
-                }
-            )
         }
-    ) { padding ->
-
-        Column(modifier = Modifier.padding(padding)) {
-
-            // ➕ CREATE BUTTON
-            Button(
-                onClick = { showDialog = true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.sapphire)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Create", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            }
-
-            Text(
-                text = "Collaborations",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(12.dp)
-            )
-
-            LazyColumn {
-                items(collaborations) { collab ->
-
-                    val isJoined = collab.joinedUsers.containsKey(userId)
-
-                    CollaborateDesign(
-                        collaboration = collab,
-                        isJoined = isJoined,
-                        onJoinClick = {
-
-                            val updates = hashMapOf<String, Any>(
-                                "joinedUsers/$userId" to true,
-                                "members" to (collab.members + 1)
-                            )
-
-                            dbRef.child(collab.id).updateChildren(updates)
-                        }
-                    )
+    },  bottomBar = {
+        BottomNavigation(
+            navHostController = navHostController,
+            selectedItem = 0,
+            onClick = { index ->
+                when (index) {
+                    0 -> navHostController.navigate(Routes.HomeScreen)
+                    1 -> navHostController.navigate(Routes.ExploreScreen)
+                    2 -> navHostController.navigate(Routes.CollaborateScreen)
+                    3 -> navHostController.navigate(Routes.UserProfileScreen)
                 }
-            }
-        }
-    }
-
-    // ➕ CREATE DIALOG
-    if (showDialog) {
-
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            confirmButton = {
-                Button(onClick = {
-
-                    val id = dbRef.push().key ?: return@Button
-
-                    val newCollab = Collaboration(
-                        id = id,
-                        name = name,
-                        members = 1,
-                        joinedUsers = mapOf(userId to true)
-                    )
-
-                    dbRef.child(id).setValue(newCollab)
-
-                    name = ""
-                    showDialog = false
-                }) {
-                    Text("Save")
-                }
-            },
-            dismissButton = {
-                Button(onClick = { showDialog = false }) {
-                    Text("Cancel")
-                }
-            },
-            title = { Text("Create Collaboration") },
-            text = {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Collaboration Name") }
-                )
             }
         )
+    }) {
+        Column(modifier = Modifier.padding(it)) {
+
+            Button(onClick = {}, colors = ButtonDefaults
+                .buttonColors(containerColor = colorResource(id = R.color.sapphire)),
+                  modifier = Modifier
+                      .fillMaxWidth()
+                      .padding(16.dp)
+                ) {
+                Text(text = "Create", fontSize = 24.sp,fontWeight= FontWeight.Bold)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(text = "Collaborations",
+                fontSize = 23.sp,
+                fontWeight= FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            LazyColumn {
+                    items(sampleCollaboration) { collaboration ->
+                        CollaborateDesign(collaboration = collaboration)
+                    }
+            }
+        }
     }
 }
