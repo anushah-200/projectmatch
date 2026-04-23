@@ -17,6 +17,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,60 +27,59 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.firebase.database.snapshot.Index
 import com.igdtuw.projectmatch.R
+import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
 fun BottomNavigation(
     navHostController: NavHostController,
-    onClick:(Index: Int) -> Unit,
-    selectedItem: Int
-){
-
+) {
     val items = listOf(
-        NavigationItem(name = "Chats", R.drawable.chat_icon, R.drawable.chat_icon),
-        NavigationItem(name = "Explore", R.drawable.explore_icon, R.drawable.explore_icon),
-        NavigationItem(name = "Community", R.drawable.collaborate_icon, R.drawable.collaborate_icon),
-        NavigationItem(name = "Profile", R.drawable.profile_icon, R.drawable.profile_icon)
+        NavigationItem("Chats",     Routes.HomeScreen,        R.drawable.chat_icon,        R.drawable.chat_icon),
+        NavigationItem("Explore",   Routes.ExploreScreen,     R.drawable.explore_icon,     R.drawable.explore_icon),
+        NavigationItem("Community", Routes.CollaborateScreen, R.drawable.collaborate_icon, R.drawable.collaborate_icon),
+        NavigationItem("Profile",   Routes.UserProfileScreen, R.drawable.profile_icon,     R.drawable.profile_icon)
     )
+
+    val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
         containerColor = Color.White,
         modifier = Modifier.height(80.dp)
     ) {
-        items.forEachIndexed { index, item ->
+        items.forEach { item ->
+            val itemRoute = item.route::class.qualifiedName
+            val isSelected = currentRoute == itemRoute
+
             NavigationBarItem(
-                selected = selectedItem == index,
-                onClick = { onClick(index) },
+                selected = isSelected,
+                onClick = {
+                    navHostController.navigate(item.route) {
+                        popUpTo(navHostController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 label = {
                     Text(
                         text = item.name,
-                        color = if (index == selectedItem)
-                            colorResource(R.color.sapphire)  // highlighted color
-                        else
-                            Color.DarkGray,
-                        fontWeight = if (index == selectedItem)
-                            FontWeight.Bold
-                        else
-                            FontWeight.Normal
+                        color = if (isSelected) colorResource(R.color.sapphire) else Color.DarkGray,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                     )
                 },
                 icon = {
                     Icon(
-                        painter = if (index == selectedItem)
-                            painterResource(item.selectedIcon)
-                        else
-                            painterResource(item.unselectedIcon),
-                        contentDescription = null,
-                        tint = if (index == selectedItem)
-                            colorResource(R.color.sapphire)  // highlighted color
-                        else
-                            Color.DarkGray,
-                        modifier = Modifier.size(26.dp)  // fix: was 4.dp
+                        painter = painterResource(if (isSelected) item.selectedIcon else item.unselectedIcon),
+                        contentDescription = item.name,
+                        tint = if (isSelected) colorResource(R.color.sapphire) else Color.DarkGray,
+                        modifier = Modifier.size(26.dp)
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = colorResource(R.color.misty_blue),  // background pill highlight
+                    indicatorColor = colorResource(R.color.misty_blue),
                     selectedIconColor = colorResource(R.color.sapphire),
                     unselectedIconColor = Color.DarkGray,
                     selectedTextColor = colorResource(R.color.sapphire),
@@ -92,10 +92,10 @@ fun BottomNavigation(
 
 data class NavigationItem(
     val name: String,
+    val route: Routes,            // ← Routes type instead of String
     @DrawableRes val selectedIcon: Int,
     @DrawableRes val unselectedIcon: Int,
-
-    )
+)
 //    BottomAppBar(
 //        tonalElevation = 12.dp,
 //        containerColor = Color.White

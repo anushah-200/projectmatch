@@ -19,74 +19,65 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.igdtuw.projectmatch.R
 import com.igdtuw.projectmatch.presentation.bottomnavigation.BottomNavigation
-import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
-
 fun CollaborateScreen(
     navHostController: NavHostController
-){
+) {
     val sampleCollaboration = listOf(
         Collaboration(name = "AI Hackathon", memberCount = "15 members"),
         Collaboration(name = "Mobile App Group", memberCount = "11 members"),
         Collaboration(name = "Innovate and Learn", memberCount = "9 members"),
         Collaboration(name = "Machine learning with AI", memberCount = "13 members")
     )
-    Scaffold(topBar = {
-        Box(modifier = Modifier.fillMaxWidth()){
-            Column {
-                Row{
-                    Text(text="Collaborate",
-                        fontSize = 32.sp,
-                        color = Color.Black,
-                        fontWeight= FontWeight.Bold,
-                        modifier = Modifier.padding(start = 5.dp, top = 25.dp)
-                    )
-                }
-                HorizontalDivider()
-            }
-        }
-    },  bottomBar = {
-        BottomNavigation(
-            navHostController = navHostController,
-            selectedItem = 0,
-            onClick = { index ->
-                when (index) {
-                    0 -> navHostController.navigate(Routes.HomeScreen)
-                    1 -> navHostController.navigate(Routes.ExploreScreen)
-                    2 -> navHostController.navigate(Routes.CollaborateScreen)
-                    3 -> navHostController.navigate(Routes.UserProfileScreen)
-                }
-            }
-        )
-    }) {
-        Column(modifier = Modifier.padding(it)) {
 
-            Button(onClick = {}, colors = ButtonDefaults
-                .buttonColors(containerColor = colorResource(id = R.color.sapphire)),
-                  modifier = Modifier
-                      .fillMaxWidth()
-                      .padding(16.dp)
-                ) {
-                Text(text = "Create", fontSize = 24.sp,fontWeight= FontWeight.Bold)
+    Scaffold(
+        topBar = {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Column {
+                    Row {
+                        Text(
+                            text = "Collaborate",
+                            fontSize = 32.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = 5.dp, top = 25.dp)
+                        )
+                    }
+                    HorizontalDivider()
+                }
+            }
+        },
+        bottomBar = {
+            BottomNavigation(navHostController = navHostController)
+        }
+    ) {
+        Column(modifier = Modifier.padding(it)) {
+            Button(
+                onClick = {},
+                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.sapphire)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(text = "Create", fontSize = 24.sp, fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.height(8.dp))
-
-            Text(text = "Collaborations",
+            Text(
+                text = "Collaborations",
                 fontSize = 23.sp,
-                fontWeight= FontWeight.Bold,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+            )
             LazyColumn {
-                    items(sampleCollaboration) { collaboration ->
-                        CollaborateDesign(collaboration = collaboration)
-                    }
+                items(sampleCollaboration) { collaboration ->
+                    CollaborateDesign(collaboration = collaboration)
+                }
             }
         }
     }

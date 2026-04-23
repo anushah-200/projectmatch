@@ -39,59 +39,54 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.igdtuw.projectmatch.R
 import com.igdtuw.projectmatch.presentation.bottomnavigation.BottomNavigation
-import com.igdtuw.projectmatch.presentation.navigation.Routes
 
 @Composable
 fun ExploreScreen(
     navHostController: NavHostController
 ) {
-
-        val scrollState = rememberScrollState()
+    val scrollState = rememberScrollState()
     val sampleListings = listOf(
-            ListingData(
-                image = R.drawable.p6,
-                name = "Mathew",
-                list = "#frontend #cpp #kotlin"
-            ),
-            ListingData(
-                 image = R.drawable.p5,
-                 name = "Anthony",
-                 list = "#backend #python"
-            ),
-            ListingData(
-                image = R.drawable.img,
-                name = "Sarah",
-                list = "#backend #ai and ml"
-            ),
-            ListingData(
-                image = R.drawable.p2,
-                name = "Leonardo",
-                list = "#frontend #python #Node.js"
-            ),
-            ListingData(
+        ListingData(
+            image = R.drawable.p6,
+            name = "Mathew",
+            list = "#frontend #cpp #kotlin"
+        ),
+        ListingData(
+            image = R.drawable.p5,
+            name = "Anthony",
+            list = "#backend #python"
+        ),
+        ListingData(
+            image = R.drawable.img,
+            name = "Sarah",
+            list = "#backend #ai and ml"
+        ),
+        ListingData(
+            image = R.drawable.p2,
+            name = "Leonardo",
+            list = "#frontend #python #Node.js"
+        ),
+        ListingData(
             image = R.drawable.p3,
             name = "Robin",
             list = "#frontend #cpp #kotlin"
-            ),
-            ListingData(
+        ),
+        ListingData(
             image = R.drawable.p6,
             name = "Aarav",
             list = "#frontend #cpp #kotlin"
-            ),
-            ListingData(
+        ),
+        ListingData(
             image = R.drawable.p4,
             name = "Miranda",
             list = "#frontend #cpp #kotlin"
-            ),
-            ListingData(
-                image = R.drawable.img,
-                name = "Ruzula",
-                list = "#frontend #cpp #kotlin"
-            )
-
+        ),
+        ListingData(
+            image = R.drawable.img,
+            name = "Ruzula",
+            list = "#frontend #cpp #kotlin"
+        )
     )
-
-
 
     Scaffold(
 //        floatingActionButton = {
@@ -107,21 +102,9 @@ fun ExploreScreen(
 //            }
 //        },
         bottomBar = {
-            BottomNavigation(
-                navHostController = navHostController,
-                selectedItem = 0,
-                onClick = { index ->
-                    when (index) {
-                        0 -> navHostController.navigate(Routes.HomeScreen)
-                        1 -> navHostController.navigate(Routes.ExploreScreen)
-                        2 -> navHostController.navigate(Routes.CollaborateScreen)
-                        3 -> navHostController.navigate(Routes.UserProfileScreen)
-                    }
-                }
-            )
+            BottomNavigation(navHostController = navHostController)
         },
         topBar = { Topbar() }
-
     ) { innerPadding ->
 
         Column(
@@ -131,8 +114,6 @@ fun ExploreScreen(
                 .padding(horizontal = 16.dp)
                 .verticalScroll(scrollState)
         ) {
-
-
             Text(
                 text = "My Listings:",
                 fontSize = 20.sp,
@@ -142,7 +123,6 @@ fun ExploreScreen(
             )
 
             AddListings()
-
 
             Text(
                 text = "Listings :",
@@ -155,7 +135,6 @@ fun ExploreScreen(
             sampleListings.forEach {
                 Listings(listingData = it)
             }
-
         }
     }
 }

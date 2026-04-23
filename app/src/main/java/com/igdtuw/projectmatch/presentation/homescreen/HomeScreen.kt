@@ -25,7 +25,6 @@ fun HomeScreen(
     navHostController: NavHostController,
     homeBaseViewModel: BaseViewModel
 ) {
-
     var showPopup by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var isSearching by remember { mutableStateOf(false) }
@@ -50,18 +49,7 @@ fun HomeScreen(
             }
         },
         bottomBar = {
-            BottomNavigation(
-                navHostController = navHostController,
-                selectedItem = 0,
-                onClick = { index ->
-                    when (index) {
-                        0 -> navHostController.navigate(Routes.HomeScreen)
-                        1 -> navHostController.navigate(Routes.ExploreScreen)
-                        2 -> navHostController.navigate(Routes.CollaborateScreen)
-                        3 -> navHostController.navigate(Routes.UserProfileScreen)
-                    }
-                }
-            )
+            BottomNavigation(navHostController = navHostController)
         }
     ) { paddingValues ->
 
@@ -71,11 +59,9 @@ fun HomeScreen(
                 .background(color = Color.White)
                 .fillMaxSize()
         ) {
-
             Spacer(modifier = Modifier.height(8.dp))
 
             Box(modifier = Modifier.fillMaxWidth()) {
-
                 if (isSearching) {
                     TextField(
                         value = searchText,
@@ -121,7 +107,6 @@ fun HomeScreen(
                     }
                 } else {
                     Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-
                         IconButton(onClick = { isSearching = true }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.search_icon),
@@ -270,7 +255,6 @@ fun AddUserPopup(
         }
     }
 }
-
 
 
 //    val chatData= listOf(
