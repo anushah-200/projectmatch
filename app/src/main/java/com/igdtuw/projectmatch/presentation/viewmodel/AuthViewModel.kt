@@ -6,8 +6,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.igdtuw.projectmatch.models.EmailAuthUser
+import com.igdtuw.projectmatch.presentation.imageutils.ImageUtils
 import java.io.ByteArrayOutputStream
 
 class AuthViewModel : ViewModel() {
@@ -73,12 +77,16 @@ class AuthViewModel : ViewModel() {
         _authState.value= AuthState.Unauthenticated
     }
 
-    fun saveUserProfile(name: String, skills: String,profileImage: Bitmap?){
+    fun saveUserProfile(
+        name: String,
+        skills: String,
+        profileImage: Bitmap?,
+        onSuccess: () -> Unit){
 
         val currentUser = auth.currentUser ?: return
         val uid = currentUser.uid
         val email = currentUser.email ?: ""
-        val encodedImage= profileImage?.let { covertBitmapToBase64(it) }
+        val encodedImage= profileImage?.let { ImageUtils.bitmapToBase64(it) }
 
         val user = EmailAuthUser(
             uid = uid,
@@ -91,14 +99,39 @@ class AuthViewModel : ViewModel() {
         database.getReference("users")
             .child(uid)
             .setValue(user)
+            .addOnSuccessListener {
+                onSuccess()
+            }
 
     }
 
-    fun covertBitmapToBase64(bitmap:Bitmap): String{
-        val byteArrayOutputStream= ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val byteArray=byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+//    fun convertBitmapToBase64(bitmap:Bitmap): String{
+//        val byteArrayOutputStream= ByteArrayOutputStream()
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+//        val byteArray=byteArrayOutputStream.toByteArray()
+//        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+//    }
+
+    private val _userData = MutableLiveData<EmailAuthUser?>()
+    val userData: LiveData<EmailAuthUser?> = _userData
+
+    fun fetchUserProfile(){
+
+        val uid = auth.currentUser?.uid ?: return
+
+        database.getReference("users")
+            .child(uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener{
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val user = snapshot.getValue(EmailAuthUser::class.java)
+                    _userData.value = user
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    _userData.value = null
+                }
+            })
     }
 
 

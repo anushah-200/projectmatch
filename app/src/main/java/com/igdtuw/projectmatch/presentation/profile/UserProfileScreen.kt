@@ -44,6 +44,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.igdtuw.projectmatch.R
+import com.igdtuw.projectmatch.presentation.navigation.Routes
 import com.igdtuw.projectmatch.presentation.viewmodel.AuthViewModel
 
 
@@ -151,7 +152,11 @@ fun UserProfileScreen(navHostController: NavHostController,authViewModel: AuthVi
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(onClick = {
-            authViewModel.saveUserProfile(name,skills,bitmapImage)
+            authViewModel.saveUserProfile(name,skills,bitmapImage){
+                navHostController.navigate(Routes.HomeScreen){
+                    popUpTo<Routes.UserProfileScreen> {inclusive=true }
+                }
+            }
         },
             colors = ButtonDefaults.buttonColors(colorResource(R.color.sapphire))) {
             Text("Save")

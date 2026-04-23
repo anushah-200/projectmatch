@@ -26,6 +26,9 @@ sealed class Routes {
     data object UserProfileScreen : Routes()
 
     @Serializable
+    data object ProfileDisplayScreen : Routes()
+
+    @Serializable
     data object CollaborateScreen : Routes()
     @Serializable
     data object SettingScreen : Routes()

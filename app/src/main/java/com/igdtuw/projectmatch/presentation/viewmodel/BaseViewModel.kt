@@ -200,15 +200,15 @@ class BaseViewModel: ViewModel() {
         }
     }
 
-
-    @OptIn(ExperimentalEncodingApi::class)
-    fun base64ToBitmap(base64String: String): Bitmap?{
-        return try {
-            val decodedByte = Base64.decode(base64String,android.util.Base64.DEFAULT)
-            val inputStream: InputStream = ByteArrayInputStream(decodedByte)
-            BitmapFactory.decodeStream(inputStream)
-        } catch (e: IOException){
-            null
-        }
-    }
+//
+//    @OptIn(ExperimentalEncodingApi::class)
+//    fun base64ToBitmap(base64String: String): Bitmap?{
+//        return try {
+//            val decodedByte = Base64.decode(base64String,android.util.Base64.DEFAULT)
+//            val inputStream: InputStream = ByteArrayInputStream(decodedByte)
+//            BitmapFactory.decodeStream(inputStream)
+//        } catch (e: IOException){
+//            null
+//        }
+//    }
 }

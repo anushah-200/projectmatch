@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.igdtuw.projectmatch.R
+import com.igdtuw.projectmatch.presentation.imageutils.ImageUtils
 import com.igdtuw.projectmatch.presentation.viewmodel.BaseViewModel
 
 @Composable
@@ -42,7 +43,7 @@ fun ChatDesign(
 
         val profileImage = chatListModel?.profileImage
         val bitmap = remember {
-            profileImage?.let { baseViewModel.base64ToBitmap(it) }
+            profileImage?.let { ImageUtils.base64ToBitmap(it) }
         }
         Image(
             painter = if (bitmap!= null){
