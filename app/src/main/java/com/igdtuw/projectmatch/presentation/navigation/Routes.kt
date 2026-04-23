@@ -30,10 +30,16 @@ sealed class Routes {
 
     @Serializable
     data object CollaborateScreen : Routes()
+
     @Serializable
     data object SettingScreen : Routes()
+
     @Serializable
-    data object ChatScreen: Routes(){
+    data object ChatScreen : Routes() {
         const val route = "chat_screen/{email}"
-        fun createRoute(email : String) = "chat_screen/$email"}
+        fun createRoute(email: String): String {
+            val encodedEmail = android.net.Uri.encode(email)
+            return "chat_screen/$encodedEmail"
+        }
+    }
 }

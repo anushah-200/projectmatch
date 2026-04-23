@@ -144,3 +144,4 @@ sealed class AuthState{
     object InitialLoading: AuthState()
     data class Error(val message: String): AuthState()
 }
+

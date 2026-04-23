@@ -8,85 +8,102 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.igdtuw.projectmatch.models.Message
 import com.igdtuw.projectmatch.presentation.homescreen.ChatListModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.io.InputStream
-import kotlin.io.encoding.Base64
+import javax.inject.Inject
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-class BaseViewModel: ViewModel() {
+@HiltViewModel
+class BaseViewModel @Inject constructor() : ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseDatabase.getInstance().reference
 
-    fun searchUserByEmail(email: String, callback:(ChatListModel?)-> Unit){
-
-        db.child("users")
-            .orderByChild("email")
-            .equalTo(email)
-            .addListenerForSingleValueEvent(object : ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()){
-                        val user = snapshot.children.first()
-                            .getValue(ChatListModel::class.java)
-                        callback(user)
-                    } else callback(null)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("BaseViewModel", "Error fetching user: ${error.message}")
-                    callback(null)
-                }
-            })
-    }
-
+    // ─── Chat List (HomeScreen) ───────────────────────────────────────────────
     private val _chatList = MutableStateFlow<List<ChatListModel>>(emptyList())
     val chatList = _chatList.asStateFlow()
+
+    // ─── All Users (ExploreScreen) ────────────────────────────────────────────
+    private val _allUsers = MutableStateFlow<List<ChatListModel>>(emptyList())
+    val allUsers = _allUsers.asStateFlow()
 
     init {
         loadChatData()
     }
 
-    private fun loadChatData(){
-
+    // ─── Explore: fetch every user except self ────────────────────────────────
+    fun fetchAllUsers() {
         val currentUserId = auth.currentUser?.uid ?: return
 
-        db.child("messages")
-            .child(currentUserId)
-            .addValueEventListener(object : ValueEventListener{
-
+        db.child("users")
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    val users = mutableListOf<ChatListModel>()
+                    snapshot.children.forEach { child ->
+                        val uid = child.key ?: return@forEach
+                        if (uid == currentUserId) return@forEach
 
+                        val name         = child.child("name").value as? String ?: "Unknown"
+                        val email        = child.child("email").value as? String
+                        val skills       = child.child("skills").value as? String
+                        val profileImage = child.child("profileImage").value as? String
+
+                        users.add(
+                            ChatListModel(
+                                name         = name,
+                                userId       = uid,
+                                email        = email,
+                                profileImage = profileImage,
+                                message      = skills
+                            )
+                        )
+                    }
+                    _allUsers.value = users
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("BaseViewModel", "fetchAllUsers: ${error.message}")
+                }
+            })
+    }
+
+    // ─── Home: load existing chats from "chats" node ─────────────────────────
+    private fun loadChatData() {
+        val currentUserId = auth.currentUser?.uid ?: return
+
+        // Read from "chats" node (not "messages")
+        db.child("chats")
+            .child(currentUserId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
                     val chatList = mutableListOf<ChatListModel>()
 
                     snapshot.children.forEach { child ->
-
                         val otherUserId = child.key ?: return@forEach
 
-                        // Fetch user details
                         db.child("users").child(otherUserId)
-                            .addListenerForSingleValueEvent(object : ValueEventListener{
-
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(userSnap: DataSnapshot) {
+                                    val name         = userSnap.child("name").value as? String ?: "Unknown"
+                                    val email        = userSnap.child("email").value as? String
+                                    val profileImage = userSnap.child("profileImage").value as? String
 
-                                    val name = userSnap.child("name").value as? String ?: "Unknown"
-                                    val email = userSnap.child("email").value as? String
-
-                                    fetchLastMessageForChat(otherUserId){ lastMsg, time ->
-
-                                        chatList.add(
+                                    fetchLastMessageForChat(otherUserId) { lastMsg, time ->
+                                        val updated = chatList.toMutableList()
+                                        updated.removeAll { it.userId == otherUserId }
+                                        updated.add(
                                             ChatListModel(
-                                                name = name,
-                                                userId = otherUserId,
-                                                email = email,
-                                                message = lastMsg,
-                                                time = time
+                                                name         = name,
+                                                userId       = otherUserId,
+                                                email        = email,
+                                                profileImage = profileImage,
+                                                message      = lastMsg,
+                                                time         = time
                                             )
                                         )
-
-                                        _chatList.value = chatList
+                                        _chatList.value = updated
                                     }
                                 }
 
@@ -96,51 +113,65 @@ class BaseViewModel: ViewModel() {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("BaseViewModel", "Error loading chats: ${error.message}")
+                    Log.e("BaseViewModel", "loadChatData: ${error.message}")
                 }
             })
     }
 
-    fun sendMessage(receiverId: String, messageText: String){
+    // ─── Add user to chat list — writes to "chats" node only ─────────────────
+    fun addChat(user: ChatListModel) {
+        val currentUserId = auth.currentUser?.uid ?: return
+        val otherUserId   = user.userId ?: return
 
-        val senderId = auth.currentUser?.uid ?: return
+        // Only track the relationship in "chats", not "messages"
+        db.child("chats")
+            .child(currentUserId)
+            .child(otherUserId)
+            .setValue(true)
+
+        db.child("chats")
+            .child(otherUserId)
+            .child(currentUserId)
+            .setValue(true)
+    }
+
+    // ─── Send a message — writes to "messages" node ───────────────────────────
+    fun sendMessage(receiverId: String, messageText: String) {
+        val senderId  = auth.currentUser?.uid ?: return
         val messageId = db.push().key ?: return
 
         val message = Message(
-            senderId = senderId,
+            senderId   = senderId,
             receiverId = receiverId,
-            message = messageText,
-            timeStamp = System.currentTimeMillis()
+            message    = messageText,
+            timeStamp  = System.currentTimeMillis()
         )
 
-        db.child("messages")
-            .child(senderId)
-            .child(receiverId)
-            .child(messageId)
-            .setValue(message)
-
-        db.child("messages")
-            .child(receiverId)
-            .child(senderId)
-            .child(messageId)
-            .setValue(message)
+        db.child("messages").child(senderId).child(receiverId).child(messageId).setValue(message)
+        db.child("messages").child(receiverId).child(senderId).child(messageId).setValue(message)
     }
 
+    // ─── Listen for new messages — skips non-Message nodes ───────────────────
     fun getMessage(
         receiverId: String,
-        onNewMessage: (Message)-> Unit){
-
+        onNewMessage: (Message) -> Unit
+    ) {
         val senderId = auth.currentUser?.uid ?: return
 
         db.child("messages")
             .child(senderId)
             .child(receiverId)
-            .addChildEventListener(object : ChildEventListener{
-
+            .addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    val message = snapshot.getValue(Message::class.java)
-                    if (message != null){
-                        onNewMessage(message)
+                    try {
+                        // Skip any boolean/init nodes
+                        if (snapshot.key == "__init__") return
+                        val message = snapshot.getValue(Message::class.java)
+                        if (message != null && message.senderId != null) {
+                            onNewMessage(message)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("BaseViewModel", "getMessage skip bad node: ${e.message}")
                     }
                 }
 
@@ -151,11 +182,11 @@ class BaseViewModel: ViewModel() {
             })
     }
 
+    // ─── Fetch last message preview ───────────────────────────────────────────
     fun fetchLastMessageForChat(
         receiverId: String,
-        onLastMessageFetched: (String,String)->Unit
-    ){
-
+        onLastMessageFetched: (String, String) -> Unit
+    ) {
         val senderId = auth.currentUser?.uid ?: return
 
         db.child("messages")
@@ -163,42 +194,60 @@ class BaseViewModel: ViewModel() {
             .child(receiverId)
             .orderByChild("timeStamp")
             .limitToLast(1)
-            .addListenerForSingleValueEvent(object : ValueEventListener{
-
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()){
+                    if (snapshot.exists()) {
                         val last = snapshot.children.first()
-                        val msg = last.child("message").value as? String ?: "No message"
+                        val msg  = last.child("message").value as? String ?: ""
                         val time = last.child("timeStamp").value as? Long ?: 0L
-                        onLastMessageFetched(msg, time.toString())
+                        onLastMessageFetched(msg, formatTime(time))
                     } else {
-                        onLastMessageFetched("No message","--")
+                        onLastMessageFetched("", "--")
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    onLastMessageFetched("No message","--")
+                    onLastMessageFetched("", "--")
                 }
             })
     }
-    fun addChat(user: ChatListModel) {
-        val currentUserId = auth.currentUser?.uid ?: return
-        val otherUserId = user.userId ?: return
-        db.child("messages")
-            .child(currentUserId)
-            .child(otherUserId)
-            .setValue(true)
+
+    // ─── Search user by email ─────────────────────────────────────────────────
+    fun searchUserByEmail(email: String, callback: (ChatListModel?) -> Unit) {
+        db.child("users")
+            .orderByChild("email")
+            .equalTo(email)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val child = snapshot.children.first()
+                        val user = ChatListModel(
+                            name         = child.child("name").value as? String,
+                            userId       = child.key,
+                            email        = child.child("email").value as? String,
+                            profileImage = child.child("profileImage").value as? String
+                        )
+                        callback(user)
+                    } else callback(null)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("BaseViewModel", "searchUserByEmail: ${error.message}")
+                    callback(null)
+                }
+            })
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
-    private fun decodeBase64toBitmap(base64Image: String): Bitmap?{
-        return try {
-            val decodedByte = Base64.decode(base64Image,android.util.Base64.DEFAULT)
-            BitmapFactory.decodeByteArray(decodedByte,0,decodedByte.size)
-        } catch (e: IOException){
-            null
-        }
+    // ─── Get current user UID ─────────────────────────────────────────────────
+    fun getCurrentUserId(): String? = auth.currentUser?.uid
+
+    // ─── Format timestamp ─────────────────────────────────────────────────────
+    private fun formatTime(timestamp: Long): String {
+        if (timestamp == 0L) return "--"
+        val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
+        return sdf.format(java.util.Date(timestamp))
     }
+}
 
 //
 //    @OptIn(ExperimentalEncodingApi::class)
@@ -211,4 +260,3 @@ class BaseViewModel: ViewModel() {
 //            null
 //        }
 //    }
-}

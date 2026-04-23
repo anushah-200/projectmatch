@@ -129,14 +129,19 @@ fun HomeScreen(
                                 onDismissRequest = { showMenu = false }
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text(text = "Explore") },
-                                    onClick = { showMenu = false }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text(text = "Settings") },
+                                    text = { Text(text = "Sign Out") },
+                                    leadingIcon = {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.baseline_logout_24),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    },
                                     onClick = {
                                         showMenu = false
-                                        navHostController.navigate(Routes.SettingScreen)
+                                        navHostController.navigate(Routes.WelcomeScreen) {
+                                            popUpTo(0) { inclusive = true }
+                                        }
                                     }
                                 )
                             }
@@ -255,7 +260,6 @@ fun AddUserPopup(
         }
     }
 }
-
 
 //    val chatData= listOf(
 //        ChatListModel(
