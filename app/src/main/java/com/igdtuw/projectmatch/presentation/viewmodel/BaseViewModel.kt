@@ -1,25 +1,22 @@
 package com.igdtuw.projectmatch.presentation.viewmodel
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.igdtuw.projectmatch.models.Listing
 import com.igdtuw.projectmatch.models.Message
 import com.igdtuw.projectmatch.presentation.homescreen.ChatListModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.io.IOException
 import javax.inject.Inject
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 @HiltViewModel
 class BaseViewModel @Inject constructor() : ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
-    private val db = FirebaseDatabase.getInstance().reference
+    private val db   = FirebaseDatabase.getInstance().reference
 
     // ─── Chat List (HomeScreen) ───────────────────────────────────────────────
     private val _chatList = MutableStateFlow<List<ChatListModel>>(emptyList())
@@ -28,6 +25,13 @@ class BaseViewModel @Inject constructor() : ViewModel() {
     // ─── All Users (ExploreScreen) ────────────────────────────────────────────
     private val _allUsers = MutableStateFlow<List<ChatListModel>>(emptyList())
     val allUsers = _allUsers.asStateFlow()
+
+    // ─── Listings ─────────────────────────────────────────────────────────────
+    private val _myListings  = MutableStateFlow<List<Listing>>(emptyList())
+    val myListings = _myListings.asStateFlow()
+
+    private val _allListings = MutableStateFlow<List<Listing>>(emptyList())
+    val allListings = _allListings.asStateFlow()
 
     init {
         loadChatData()
@@ -69,11 +73,91 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Home: load existing chats from "chats" node ─────────────────────────
+    // ─── Add listing ──────────────────────────────────────────────────────────
+    fun addListing(
+        projectName  : String,
+        skillsNeeded : String,
+        role         : String,
+        onSuccess    : () -> Unit,
+        onError      : (String) -> Unit
+    ) {
+        val currentUser = auth.currentUser ?: return
+        val listingId   = db.push().key ?: return
+
+        // fetch current user's name and email from Firebase
+        db.child("users").child(currentUser.uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val userName  = snapshot.child("name").value as? String ?: "Unknown"
+                    val userEmail = snapshot.child("email").value as? String ?: ""
+
+                    val listing = Listing(
+                        listingId    = listingId,
+                        userId       = currentUser.uid,
+                        userName     = userName,
+                        userEmail    = userEmail,
+                        projectName  = projectName,
+                        skillsNeeded = skillsNeeded,
+                        role         = role
+                    )
+
+                    db.child("listings")
+                        .child(listingId)
+                        .setValue(listing)
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { onError(it.message ?: "Failed to post listing") }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    onError(error.message)
+                }
+            })
+    }
+
+    // ─── Fetch my listings ────────────────────────────────────────────────────
+    fun fetchMyListings() {
+        val currentUserId = auth.currentUser?.uid ?: return
+
+        db.child("listings")
+            .orderByChild("userId")
+            .equalTo(currentUserId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = snapshot.children.mapNotNull {
+                        it.getValue(Listing::class.java)
+                    }
+                    _myListings.value = list
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("BaseViewModel", "fetchMyListings: ${error.message}")
+                }
+            })
+    }
+
+    // ─── Fetch all other users listings ──────────────────────────────────────
+    fun fetchAllListings() {
+        val currentUserId = auth.currentUser?.uid ?: return
+
+        db.child("listings")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = snapshot.children
+                        .mapNotNull { it.getValue(Listing::class.java) }
+                        .filter { it.userId != currentUserId }
+                    _allListings.value = list
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("BaseViewModel", "fetchAllListings: ${error.message}")
+                }
+            })
+    }
+
+    // ─── Home: load existing chats ────────────────────────────────────────────
     private fun loadChatData() {
         val currentUserId = auth.currentUser?.uid ?: return
 
-        // Read from "chats" node (not "messages")
         db.child("chats")
             .child(currentUserId)
             .addValueEventListener(object : ValueEventListener {
@@ -118,24 +202,16 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Add user to chat list — writes to "chats" node only ─────────────────
+    // ─── Add user to chat list ────────────────────────────────────────────────
     fun addChat(user: ChatListModel) {
         val currentUserId = auth.currentUser?.uid ?: return
         val otherUserId   = user.userId ?: return
 
-        // Only track the relationship in "chats", not "messages"
-        db.child("chats")
-            .child(currentUserId)
-            .child(otherUserId)
-            .setValue(true)
-
-        db.child("chats")
-            .child(otherUserId)
-            .child(currentUserId)
-            .setValue(true)
+        db.child("chats").child(currentUserId).child(otherUserId).setValue(true)
+        db.child("chats").child(otherUserId).child(currentUserId).setValue(true)
     }
 
-    // ─── Send a message — writes to "messages" node ───────────────────────────
+    // ─── Send a message ───────────────────────────────────────────────────────
     fun sendMessage(receiverId: String, messageText: String) {
         val senderId  = auth.currentUser?.uid ?: return
         val messageId = db.push().key ?: return
@@ -151,10 +227,10 @@ class BaseViewModel @Inject constructor() : ViewModel() {
         db.child("messages").child(receiverId).child(senderId).child(messageId).setValue(message)
     }
 
-    // ─── Listen for new messages — skips non-Message nodes ───────────────────
+    // ─── Listen for new messages ──────────────────────────────────────────────
     fun getMessage(
-        receiverId: String,
-        onNewMessage: (Message) -> Unit
+        receiverId   : String,
+        onNewMessage : (Message) -> Unit
     ) {
         val senderId = auth.currentUser?.uid ?: return
 
@@ -164,7 +240,6 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             .addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                     try {
-                        // Skip any boolean/init nodes
                         if (snapshot.key == "__init__") return
                         val message = snapshot.getValue(Message::class.java)
                         if (message != null && message.senderId != null) {
@@ -174,7 +249,6 @@ class BaseViewModel @Inject constructor() : ViewModel() {
                         Log.e("BaseViewModel", "getMessage skip bad node: ${e.message}")
                     }
                 }
-
                 override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
                 override fun onChildRemoved(snapshot: DataSnapshot) {}
                 override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -184,8 +258,8 @@ class BaseViewModel @Inject constructor() : ViewModel() {
 
     // ─── Fetch last message preview ───────────────────────────────────────────
     fun fetchLastMessageForChat(
-        receiverId: String,
-        onLastMessageFetched: (String, String) -> Unit
+        receiverId           : String,
+        onLastMessageFetched : (String, String) -> Unit
     ) {
         val senderId = auth.currentUser?.uid ?: return
 
@@ -221,7 +295,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         val child = snapshot.children.first()
-                        val user = ChatListModel(
+                        val user  = ChatListModel(
                             name         = child.child("name").value as? String,
                             userId       = child.key,
                             email        = child.child("email").value as? String,
@@ -248,7 +322,6 @@ class BaseViewModel @Inject constructor() : ViewModel() {
         return sdf.format(java.util.Date(timestamp))
     }
 }
-
 //
 //    @OptIn(ExperimentalEncodingApi::class)
 //    fun base64ToBitmap(base64String: String): Bitmap?{
