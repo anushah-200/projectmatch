@@ -134,7 +134,26 @@ class AuthViewModel : ViewModel() {
             })
     }
 
+    fun updateUserProfile(
+        name     : String,
+        skills   : String,
+        onSuccess: () -> Unit,
+        onError  : (String) -> Unit
+    ) {
+        val currentUser = auth.currentUser ?: return
+        val uid         = currentUser.uid
 
+        val updates = mapOf(
+            "name"   to name,
+            "skills" to skills
+        )
+
+        database.getReference("users")
+            .child(uid)
+            .updateChildren(updates)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onError(it.message ?: "Update failed") }
+    }
 }
 
 sealed class AuthState{

@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.igdtuw.projectmatch.presentation.collaboratescreen.CollaborateScreen
+import com.igdtuw.projectmatch.presentation.explorescreen.AddListingScreen
 import com.igdtuw.projectmatch.presentation.explorescreen.ExploreScreen
 import com.igdtuw.projectmatch.presentation.homescreen.HomeScreen
 import com.igdtuw.projectmatch.presentation.loginscreen.LoginScreen
@@ -18,6 +19,7 @@ import com.igdtuw.projectmatch.presentation.splashscreen.SplashScreen
 import com.igdtuw.projectmatch.presentation.welcomescreen.WelcomeScreen
 import com.igdtuw.projectmatch.presentation.profile.UserProfileScreen
 import com.igdtuw.projectmatch.presentation.chatscreen.ChatScreen
+import com.igdtuw.projectmatch.presentation.profile.ProfileDisplayScreen
 import com.igdtuw.projectmatch.presentation.viewmodel.AuthViewModel
 import com.igdtuw.projectmatch.presentation.viewmodel.BaseViewModel
 
@@ -31,7 +33,6 @@ fun NavigationSystem(modifier: Modifier) {
         startDestination = Routes.SplashScreen,
         navController    = navcontroller
     ) {
-
         composable<Routes.SplashScreen> {
             SplashScreen(navcontroller)
         }
@@ -57,10 +58,14 @@ fun NavigationSystem(modifier: Modifier) {
         composable<Routes.UserProfileScreen> {
             UserProfileScreen(navcontroller, authViewModel = authViewModel)
         }
-
-        // ── ChatScreen ────────────────────────────────────────────────────────
+        composable<Routes.ProfileDisplayScreen> {
+            ProfileDisplayScreen(navcontroller, authViewModel = authViewModel)
+        }
+        composable<Routes.AddListingScreen> {
+            AddListingScreen(navcontroller)
+        }
         composable(
-            route = Routes.ChatScreen.route,
+            route     = Routes.ChatScreen.route,
             arguments = listOf(
                 navArgument("email") {
                     type     = NavType.StringType
