@@ -33,7 +33,7 @@ fun CollaborateScreen(
 
     var collaborations by remember { mutableStateOf(listOf<Collaboration>()) }
 
-    // uid → name map
+
     var userNames by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
 
     var showDialog by remember { mutableStateOf(false) }
@@ -51,7 +51,7 @@ fun CollaborateScreen(
         } else collaborations
     }
 
-    // 🔄 FETCH COLLABORATIONS
+
     LaunchedEffect(Unit) {
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -65,7 +65,7 @@ fun CollaborateScreen(
         })
     }
 
-    // 🔥 FETCH USER NAMES
+
     LaunchedEffect(collaborations) {
         val tempMap = mutableMapOf<String, String>()
 
@@ -94,7 +94,7 @@ fun CollaborateScreen(
                 .fillMaxSize()
         ) {
 
-            // 🔥 YOUR TOP BAR (UNCHANGED EXACTLY)
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -184,7 +184,7 @@ fun CollaborateScreen(
             Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider()
 
-            // ➕ CREATE
+
             Button(
                 onClick = { showDialog = true },
                 modifier = Modifier
@@ -216,7 +216,7 @@ fun CollaborateScreen(
         }
     }
 
-    // ➕ CREATE DIALOG (UNCHANGED)
+
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },

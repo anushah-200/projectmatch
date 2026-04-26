@@ -43,7 +43,7 @@ fun CollaborateDesign(
 
             Spacer(Modifier.height(10.dp))
 
-            // 🔽 DROPDOWN
+
             Text(
                 text = if (showMembers) "▼ Members" else "▶ Members",
                 fontWeight = FontWeight.Bold,
