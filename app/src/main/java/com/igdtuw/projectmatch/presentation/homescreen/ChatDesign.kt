@@ -35,11 +35,11 @@ fun ChatDesign(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }   // ✅ whole row is clickable
+            .clickable { onClick() }
             .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // ── Profile picture ───────────────────────────────────────────────────
+
         Image(
             painter = if (bitmap != null) rememberImagePainter(bitmap)
             else painterResource(R.drawable.user_placeholder),
@@ -53,7 +53,7 @@ fun ChatDesign(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // ── Name + last message ───────────────────────────────────────────────
+
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,

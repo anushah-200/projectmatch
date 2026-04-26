@@ -62,7 +62,7 @@ fun UserProfileScreen(navHostController: NavHostController,authViewModel: AuthVi
 
     val firebaseAuth= Firebase.auth
     val email = firebaseAuth.currentUser?.email?:""
-    //val userId = firebaseAuth.currentUser?.uid?:""
+
 
     val context = LocalContext.current
 

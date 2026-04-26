@@ -18,15 +18,15 @@ class BaseViewModel @Inject constructor() : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val db   = FirebaseDatabase.getInstance().reference
 
-    // ─── Chat List (HomeScreen) ───────────────────────────────────────────────
+
     private val _chatList = MutableStateFlow<List<ChatListModel>>(emptyList())
     val chatList = _chatList.asStateFlow()
 
-    // ─── All Users (ExploreScreen) ────────────────────────────────────────────
+
     private val _allUsers = MutableStateFlow<List<ChatListModel>>(emptyList())
     val allUsers = _allUsers.asStateFlow()
 
-    // ─── Listings ─────────────────────────────────────────────────────────────
+
     private val _myListings  = MutableStateFlow<List<Listing>>(emptyList())
     val myListings = _myListings.asStateFlow()
 
@@ -37,12 +37,12 @@ class BaseViewModel @Inject constructor() : ViewModel() {
         loadChatData()
     }
 
-    // ─── keep loadChatData pointing to reloadChats ────────────────────────────
+
     private fun loadChatData() {
         reloadChats()
     }
 
-    // ─── Main chat loader — WhatsApp style ────────────────────────────────────
+
     fun reloadChats() {
         val currentUserId = auth.currentUser?.uid ?: return
 
@@ -71,7 +71,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
                             return@forEach
                         }
 
-                        // ── Step 1: fetch user details ────────────────────────
+
                         db.child("users").child(otherUserId)
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(userSnap: DataSnapshot) {
@@ -79,7 +79,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
                                     val email        = userSnap.child("email").value as? String ?: ""
                                     val profileImage = userSnap.child("profileImage").value as? String
 
-                                    // ── Step 2: fetch last message ────────────
+
                                     db.child("messages")
                                         .child(currentUserId)
                                         .child(otherUserId)
@@ -104,7 +104,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
                                                     }
                                                 }
 
-                                                // ── Step 3: add to list ───────
+
                                                 synchronized(resultList) {
                                                     resultList.removeAll { it.userId == otherUserId }
                                                     resultList.add(
@@ -120,7 +120,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
                                                     )
                                                     pendingCount--
                                                     if (pendingCount == 0) {
-                                                        // ✅ sort by raw timestamp — latest first
+
                                                         _chatList.value = resultList
                                                             .sortedByDescending { it.timeStamp }
                                                     }
@@ -158,7 +158,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Add user to chat list ────────────────────────────────────────────────
+
     fun addChat(user: ChatListModel) {
         val currentUserId = auth.currentUser?.uid ?: return
         val otherUserId   = user.userId ?: return
@@ -169,7 +169,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
         reloadChats()
     }
 
-    // ─── Explore: fetch every user except self ────────────────────────────────
+
     fun fetchAllUsers() {
         val currentUserId = auth.currentUser?.uid ?: return
 
@@ -205,7 +205,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Add listing ──────────────────────────────────────────────────────────
+
     fun addListing(
         projectName  : String,
         skillsNeeded : String,
@@ -245,7 +245,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Fetch my listings ────────────────────────────────────────────────────
+
     fun fetchMyListings() {
         val currentUserId = auth.currentUser?.uid ?: return
 
@@ -266,7 +266,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Fetch all other users listings ──────────────────────────────────────
+
     fun fetchAllListings() {
         val currentUserId = auth.currentUser?.uid ?: return
 
@@ -285,7 +285,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Delete a listing ─────────────────────────────────────────────────────
+
     fun deleteListing(listingId: String) {
         if (listingId.isBlank()) return
         db.child("listings")
@@ -296,7 +296,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             }
     }
 
-    // ─── Send a message ───────────────────────────────────────────────────────
+
     fun sendMessage(receiverId: String, messageText: String) {
         val senderId  = auth.currentUser?.uid ?: return
         val messageId = db.push().key ?: return
@@ -312,7 +312,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
         db.child("messages").child(receiverId).child(senderId).child(messageId).setValue(message)
     }
 
-    // ─── Listen for new messages ──────────────────────────────────────────────
+
     fun getMessage(
         receiverId   : String,
         onNewMessage : (Message) -> Unit
@@ -341,7 +341,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Fetch last message preview ───────────────────────────────────────────
+
     fun fetchLastMessageForChat(
         receiverId           : String,
         onLastMessageFetched : (String, String) -> Unit
@@ -371,7 +371,7 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Search user by email ─────────────────────────────────────────────────
+
     fun searchUserByEmail(email: String, callback: (ChatListModel?) -> Unit) {
         db.child("users")
             .orderByChild("email")
@@ -397,24 +397,13 @@ class BaseViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    // ─── Get current user UID ─────────────────────────────────────────────────
+
     fun getCurrentUserId(): String? = auth.currentUser?.uid
 
-    // ─── Format timestamp ─────────────────────────────────────────────────────
+
     private fun formatTime(timestamp: Long): String {
         if (timestamp == 0L) return "--"
         val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
         return sdf.format(java.util.Date(timestamp))
     }
 }
-//
-//    @OptIn(ExperimentalEncodingApi::class)
-//    fun base64ToBitmap(base64String: String): Bitmap?{
-//        return try {
-//            val decodedByte = Base64.decode(base64String,android.util.Base64.DEFAULT)
-//            val inputStream: InputStream = ByteArrayInputStream(decodedByte)
-//            BitmapFactory.decodeStream(inputStream)
-//        } catch (e: IOException){
-//            null
-//        }
-//    }

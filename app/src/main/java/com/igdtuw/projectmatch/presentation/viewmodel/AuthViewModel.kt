@@ -1,7 +1,6 @@
 package com.igdtuw.projectmatch.presentation.viewmodel
 
 import android.graphics.Bitmap
-import android.util.Base64
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +11,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.igdtuw.projectmatch.models.EmailAuthUser
 import com.igdtuw.projectmatch.presentation.imageutils.ImageUtils
-import java.io.ByteArrayOutputStream
+
 
 class AuthViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
@@ -105,12 +104,7 @@ class AuthViewModel : ViewModel() {
 
     }
 
-//    fun convertBitmapToBase64(bitmap:Bitmap): String{
-//        val byteArrayOutputStream= ByteArrayOutputStream()
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-//        val byteArray=byteArrayOutputStream.toByteArray()
-//        return Base64.encodeToString(byteArray, Base64.DEFAULT)
-//    }
+
 
     private val _userData = MutableLiveData<EmailAuthUser?>()
     val userData: LiveData<EmailAuthUser?> = _userData

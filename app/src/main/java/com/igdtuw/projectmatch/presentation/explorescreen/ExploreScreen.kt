@@ -80,7 +80,7 @@ fun ExploreScreen(
                 .fillMaxSize()
         ) {
 
-            // ── Top Bar (mirrors HomeScreen exactly) ──────────────────────
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -169,7 +169,6 @@ fun ExploreScreen(
             Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider()
 
-            // ── Scrollable body ───────────────────────────────────────────
             LazyColumn(
                 modifier       = Modifier
                     .fillMaxSize()
@@ -276,231 +275,8 @@ fun ExploreScreen(
             }
         }
     }
-
-    /*Scaffold(
-        bottomBar = { BottomNavigation(navHostController = navHostController) },
-        topBar = {
-            Column {
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    if (isSearching) {
-                        // ── Search mode ───────────────────────────────────────
-                        TextField(
-                            value         = searchQuery,
-                            onValueChange = { searchQuery = it },
-                            placeholder   = { Text(text = "Search listings...") },
-                            colors        = TextFieldDefaults.colors(
-                                unfocusedContainerColor = Color.Transparent,
-                                focusedContainerColor   = Color.Transparent,
-                                focusedIndicatorColor   = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent
-                            ),
-                            modifier   = Modifier
-                                .padding(start = 12.dp)
-                                .align(Alignment.CenterStart)
-                                .fillMaxWidth(0.8f),
-                            singleLine = true
-                        )
-                        IconButton(
-                            onClick  = {
-                                isSearching = false
-                                searchQuery = ""
-                            },
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        ) {
-                            Icon(
-                                painter            = painterResource(id = R.drawable.cross),
-                                contentDescription = null,
-                                modifier           = Modifier.size(24.dp)
-                            )
-                        }
-                    } else {
-                        // ── Normal mode ───────────────────────────────────────
-                        Text(
-                            text       = "Explore",
-                            fontSize   = 28.sp,
-                            color      = colorResource(R.color.sapphire),
-                            modifier   = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 16.dp),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                            IconButton(onClick = { isSearching = true }) {
-                                Icon(
-                                    painter            = painterResource(id = R.drawable.search_icon),
-                                    contentDescription = null,
-                                    modifier           = Modifier.size(24.dp)
-                                )
-                            }
-                            Box {
-                                IconButton(onClick = { showMenu = !showMenu }) {
-                                    Icon(
-                                        painter            = painterResource(id = R.drawable.menu_icon),
-                                        contentDescription = null,
-                                        modifier           = Modifier.size(24.dp)
-                                    )
-                                }
-                                DropdownMenu(
-                                    expanded         = showMenu,
-                                    onDismissRequest = { showMenu = false }
-                                ) {
-                                    DropdownMenuItem(
-                                        text = { Text(text = "Sign Out") },
-                                        leadingIcon = {
-                                            Icon(
-                                                painter            = painterResource(id = R.drawable.baseline_logout_24),
-                                                contentDescription = null,
-                                                modifier           = Modifier.size(20.dp)
-                                            )
-                                        },
-                                        onClick = {
-                                            showMenu = false
-                                            navHostController.navigate(Routes.WelcomeScreen) {
-                                                popUpTo(0) { inclusive = true }
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-                HorizontalDivider()
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick        = { navHostController.navigate(Routes.AddListingScreen) },
-                containerColor = colorResource(R.color.light_blue),
-                contentColor   = Color.White,
-                modifier       = Modifier.size(60.dp)
-            ) {
-                Icon(
-                    imageVector        = Icons.Default.Add,
-                    contentDescription = "Add Listing",
-                    modifier           = Modifier.size(28.dp)
-                )
-            }
-        }
-    ) { innerPadding ->
-
-        LazyColumn(
-            modifier       = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp),
-            contentPadding = PaddingValues(bottom = 80.dp)
-        ) {
-
-            // ── My Listings section ───────────────────────────────────────────
-            if (searchQuery.isBlank()) {
-
-                item {
-                    Text(
-                        text       = "My Listings :",
-                        fontSize   = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color      = Color.Black,
-                        modifier   = Modifier.padding(horizontal = 4.dp, vertical = 12.dp)
-                    )
-                }
-
-                if (myListings.isEmpty()) {
-                    item {
-                        Box(
-                            modifier         = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 12.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text     = "No listings yet. Tap + below to add one!",
-                                color    = Color.Gray,
-                                fontSize = 14.sp
-                            )
-                        }
-                    }
-                } else {
-                    items(myListings) { listing ->
-                        MyListingCard(
-                            listing  = listing,
-                            onDelete = {
-                                baseViewModel.deleteListing(listing.listingId ?: "")
-                            }
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                }
-
-                item {
-                    HorizontalDivider(
-                        modifier  = Modifier.padding(vertical = 12.dp),
-                        color     = Color.LightGray,
-                        thickness = 1.dp
-                    )
-                }
-            }
-
-            // ── All Listings header ───────────────────────────────────────────
-            item {
-                Text(
-                    text       = if (searchQuery.isBlank()) "Listings :"
-                    else "Results for \"$searchQuery\" :",
-                    fontSize   = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color      = Color.Black,
-                    modifier   = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            // ── All Listings cards ────────────────────────────────────────────
-            if (filteredListings.isEmpty()) {
-                item {
-                    Box(
-                        modifier         = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text     = if (searchQuery.isBlank()) "No listings from others yet."
-                            else "No listings found for \"$searchQuery\"",
-                            color    = Color.Gray,
-                            fontSize = 14.sp
-                        )
-                    }
-                }
-            } else {
-                items(filteredListings) { listing ->
-                    OtherListingCard(
-                        listing     = listing,
-                        onChatClick = {
-                            val user = ChatListModel(
-                                userId = listing.userId,
-                                email  = listing.userEmail,
-                                name   = listing.userName
-                            )
-                            baseViewModel.addChat(user)
-                            navHostController.navigate(
-                                Routes.ChatScreen.createRoute(
-                                    email = listing.userEmail ?: ""
-                                )
-                            )
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-        }
-    }*/
 }
 
-// ── My own listing card with delete ──────────────────────────────────────────
 @Composable
 fun MyListingCard(
     listing  : Listing,
@@ -575,7 +351,7 @@ fun MyListingCard(
     }
 }
 
-// ── Other user's listing card with Chat icon ──────────────────────────────────
+
 @Composable
 fun OtherListingCard(
     listing     : Listing,

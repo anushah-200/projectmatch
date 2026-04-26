@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+
 
 object ImageUtils {
     fun bitmapToBase64(bitmap:Bitmap): String{

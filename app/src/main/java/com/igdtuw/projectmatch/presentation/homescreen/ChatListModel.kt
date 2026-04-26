@@ -8,7 +8,7 @@ data class ChatListModel(
     val message      : String? = null,
     val time         : String? = null,
     val profileImage : String? = null,
-    val timeStamp    : Long    = 0L      // ← add this
+    val timeStamp    : Long    = 0L
 ) {
     constructor() : this(null, null, null, null, null, null, null, 0L)
 }

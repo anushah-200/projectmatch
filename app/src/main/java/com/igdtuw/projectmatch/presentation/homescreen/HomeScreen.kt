@@ -32,12 +32,12 @@ fun HomeScreen(
 
     val chatData by homeBaseViewModel.chatList.collectAsState()
 
-    // ── Reload chats every time HomeScreen opens ──────────────────────────────
+
     LaunchedEffect(Unit) {
         homeBaseViewModel.reloadChats()
     }
 
-    // ── Filter chats by name or last message ──────────────────────────────────
+
     val filteredChats = remember(searchText, chatData) {
         if (searchText.isBlank()) chatData
         else chatData.filter { chat ->
@@ -75,7 +75,7 @@ fun HomeScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ── Top bar ───────────────────────────────────────────────────────
+
             Box(modifier = Modifier.fillMaxWidth()) {
                 if (isSearching) {
                     TextField(
@@ -167,7 +167,7 @@ fun HomeScreen(
             HorizontalDivider()
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── Add User Popup ────────────────────────────────────────────────
+
             if (showPopup) {
                 AddUserPopup(
                     onDismiss = { showPopup = false },
@@ -181,7 +181,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            // ── Empty state ───────────────────────────────────────────────────
+
             if (chatData.isEmpty()) {
                 Box(
                     modifier         = Modifier.fillMaxSize(),
@@ -203,7 +203,7 @@ fun HomeScreen(
                     }
                 }
             } else if (filteredChats.isEmpty() && searchText.isNotBlank()) {
-                // ── No search results ─────────────────────────────────────────
+
                 Box(
                     modifier         = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -215,7 +215,7 @@ fun HomeScreen(
                     )
                 }
             } else {
-                // ── Chat list ─────────────────────────────────────────────────
+
                 LazyColumn {
                     items(filteredChats) { chat ->
                         ChatDesign(
@@ -374,110 +374,3 @@ fun AddUserPopup(
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
-//    val chatData= listOf(
-//        ChatListModel(
-//            R.drawable.p1,
-//            "Susan Connor",
-//            "10:00AM",
-//            "Hello"
-//        ),
-//        ChatListModel(
-//            R.drawable.p2,
-//            "Aston Hawk",
-//            "7:00AM",
-//            "Hi"
-//        ),
-//        ChatListModel(
-//            R.drawable.p3,
-//            "Hugo Clive",
-//            "9:00AM",
-//            "Hello"
-//        ),
-//        ChatListModel(
-//            R.drawable.p4,
-//            "Jiya Singh",
-//            "3:00PM",
-//            "Hello"
-//        ),
-//        ChatListModel(
-//            R.drawable.p5,
-//            "Vinayak Gupta",
-//            "7:00AM",
-//            "Hello"
-//        ),
-//        ChatListModel(
-//            R.drawable.p6,
-//            "David Simon",
-//            "6:00PM",
-//            "Hello"
-//        )
-//
-//    )
-
-//    Scaffold(
-//        floatingActionButton = {
-//            FloatingActionButton(
-//                onClick = {/*ToDo*/},
-//                containerColor = colorResource(R.color.sapphire),
-//                modifier = Modifier.size(65.dp),
-//                contentColor = Color.White
-//            ) {
-//
-//                Icon(
-//                    painter = painterResource(id = R.drawable.plus_icon),
-//                    contentDescription = null,
-//                    modifier = Modifier.size(28.dp))
-//            }
-//        },
-
-//        bottomBar = {
-//            BottomNavigation()
-//        }
-//    ) {
-//        Column(modifier = Modifier.padding(it)) {
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            Box(modifier = Modifier.fillMaxWidth()){
-//
-//                Text(
-//                    text = "ProjectMatch",
-//                    fontSize = 28.sp, color = colorResource(R.color.sapphire),
-//                    modifier = Modifier.align(Alignment.CenterStart).padding(start = 16.dp),
-//                    fontWeight = FontWeight.Bold
-//
-//                )
-//
-//                Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-//
-//                    IconButton(onClick = {/*ToDo*/}) {
-//                        Icon(
-//                            painter = painterResource(id = R.drawable.search_icon),
-//                            contentDescription = null,
-//                            modifier = Modifier.size(24.dp)
-//                        )
-//                    }
-//                    IconButton(onClick = {/*ToDo*/}) {
-//                        Icon(
-//                            painter = painterResource(id = R.drawable.menu_icon),
-//                            contentDescription = null,
-//                            modifier = Modifier.size(24.dp)
-//                        )
-//                    }
-//                }
-//
-//            }
-//            HorizontalDivider()
-
-//            LazyColumn() {
-//                items(chatData){
-//                        chatItem -> ChatDesign(chatListModel = chatItem)
-//                }
-//            }
-//
-//        }
-//
-//    }
-
-
-//}
