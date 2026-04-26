@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,28 +28,26 @@ import com.igdtuw.projectmatch.presentation.homescreen.ChatListModel
 import com.igdtuw.projectmatch.presentation.navigation.Routes
 import com.igdtuw.projectmatch.presentation.viewmodel.BaseViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreen(
     navHostController: NavHostController
 ) {
-    val baseViewModel : BaseViewModel = hiltViewModel()
-    val myListings   by baseViewModel.myListings.collectAsState()
-    val allListings  by baseViewModel.allListings.collectAsState()
+    val baseViewModel: BaseViewModel = hiltViewModel()
+    val myListings  by baseViewModel.myListings.collectAsState()
+    val allListings by baseViewModel.allListings.collectAsState()
 
-    // ── Search state ──────────────────────────────────────────────────────────
     var searchQuery by remember { mutableStateOf("") }
+    var isSearching by remember { mutableStateOf(false) }
+    var showMenu    by remember { mutableStateOf(false) }
 
-    // ── Filtered listings based on search query ───────────────────────────────
     val filteredListings = remember(searchQuery, allListings) {
-        if (searchQuery.isBlank()) {
-            allListings
-        } else {
-            allListings.filter { listing ->
-                listing.projectName?.contains(searchQuery, ignoreCase = true) == true ||
-                        listing.skillsNeeded?.contains(searchQuery, ignoreCase = true) == true ||
-                        listing.role?.contains(searchQuery, ignoreCase = true) == true ||
-                        listing.userName?.contains(searchQuery, ignoreCase = true) == true
-            }
+        if (searchQuery.isBlank()) allListings
+        else allListings.filter { listing ->
+            listing.projectName?.contains(searchQuery, ignoreCase = true) == true ||
+                    listing.skillsNeeded?.contains(searchQuery, ignoreCase = true) == true ||
+                    listing.role?.contains(searchQuery, ignoreCase = true) == true ||
+                    listing.userName?.contains(searchQuery, ignoreCase = true) == true
         }
     }
 
@@ -59,21 +58,98 @@ fun ExploreScreen(
 
     Scaffold(
         bottomBar = { BottomNavigation(navHostController = navHostController) },
-        topBar    = {
-            Topbar(
-                onSearchQuery = { query ->
-                    when (query) {
-                        // ── Sign out signal ───────────────────────────────────
-                        "__signout__" -> {
-                            navHostController.navigate(Routes.WelcomeScreen) {
-                                popUpTo(0) { inclusive = true }
+        topBar = {
+            Column {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    if (isSearching) {
+                        // ── Search mode ───────────────────────────────────────
+                        TextField(
+                            value         = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            placeholder   = { Text(text = "Search listings...") },
+                            colors        = TextFieldDefaults.colors(
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedContainerColor   = Color.Transparent,
+                                focusedIndicatorColor   = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            ),
+                            modifier   = Modifier
+                                .padding(start = 12.dp)
+                                .align(Alignment.CenterStart)
+                                .fillMaxWidth(0.8f),
+                            singleLine = true
+                        )
+                        IconButton(
+                            onClick  = {
+                                isSearching = false
+                                searchQuery = ""
+                            },
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            Icon(
+                                painter            = painterResource(id = R.drawable.cross),
+                                contentDescription = null,
+                                modifier           = Modifier.size(24.dp)
+                            )
+                        }
+                    } else {
+                        // ── Normal mode ───────────────────────────────────────
+                        Text(
+                            text       = "Explore",
+                            fontSize   = 28.sp,
+                            color      = colorResource(R.color.sapphire),
+                            modifier   = Modifier
+                                .align(Alignment.CenterStart)
+                                .padding(start = 16.dp),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                            IconButton(onClick = { isSearching = true }) {
+                                Icon(
+                                    painter            = painterResource(id = R.drawable.search_icon),
+                                    contentDescription = null,
+                                    modifier           = Modifier.size(24.dp)
+                                )
+                            }
+                            Box {
+                                IconButton(onClick = { showMenu = !showMenu }) {
+                                    Icon(
+                                        painter            = painterResource(id = R.drawable.menu_icon),
+                                        contentDescription = null,
+                                        modifier           = Modifier.size(24.dp)
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded         = showMenu,
+                                    onDismissRequest = { showMenu = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text(text = "Sign Out") },
+                                        leadingIcon = {
+                                            Icon(
+                                                painter            = painterResource(id = R.drawable.baseline_logout_24),
+                                                contentDescription = null,
+                                                modifier           = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showMenu = false
+                                            navHostController.navigate(Routes.WelcomeScreen) {
+                                                popUpTo(0) { inclusive = true }
+                                            }
+                                        }
+                                    )
+                                }
                             }
                         }
-                        // ── Search query ──────────────────────────────────────
-                        else -> searchQuery = query
                     }
                 }
-            )
+
+                Spacer(modifier = Modifier.height(8.dp))
+                HorizontalDivider()
+            }
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -99,7 +175,7 @@ fun ExploreScreen(
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
 
-            // ── Hide My Listings section when searching ────────────────────────
+            // ── My Listings section ───────────────────────────────────────────
             if (searchQuery.isBlank()) {
 
                 item {
@@ -121,7 +197,7 @@ fun ExploreScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text     = "No listings yet. Tap + bellow to add one!",
+                                text     = "No listings yet. Tap + below to add one!",
                                 color    = Color.Gray,
                                 fontSize = 14.sp
                             )
@@ -129,7 +205,12 @@ fun ExploreScreen(
                     }
                 } else {
                     items(myListings) { listing ->
-                        MyListingCard(listing = listing)
+                        MyListingCard(
+                            listing  = listing,
+                            onDelete = {
+                                baseViewModel.deleteListing(listing.listingId ?: "")
+                            }
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
@@ -143,7 +224,7 @@ fun ExploreScreen(
                 }
             }
 
-            // ── Listings header ───────────────────────────────────────────────
+            // ── All Listings header ───────────────────────────────────────────
             item {
                 Text(
                     text       = if (searchQuery.isBlank()) "Listings :"
@@ -156,7 +237,7 @@ fun ExploreScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            // ── Filtered listings ─────────────────────────────────────────────
+            // ── All Listings cards ────────────────────────────────────────────
             if (filteredListings.isEmpty()) {
                 item {
                     Box(
@@ -198,9 +279,35 @@ fun ExploreScreen(
     }
 }
 
-// ── My own listing card ───────────────────────────────────────────────────────
+// ── My own listing card with delete ──────────────────────────────────────────
 @Composable
-fun MyListingCard(listing: Listing) {
+fun MyListingCard(
+    listing  : Listing,
+    onDelete : () -> Unit
+) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title            = { Text("Delete Listing") },
+            text             = { Text("Are you sure you want to delete \"${listing.projectName}\"?") },
+            confirmButton    = {
+                TextButton(onClick = {
+                    showDeleteDialog = false
+                    onDelete()
+                }) {
+                    Text("Delete", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     Card(
         modifier  = Modifier.fillMaxWidth(),
         shape     = RoundedCornerShape(12.dp),
@@ -209,25 +316,40 @@ fun MyListingCard(listing: Listing) {
         ),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Text(
-                text       = listing.projectName ?: "Untitled Project",
-                fontWeight = FontWeight.Bold,
-                fontSize   = 16.sp,
-                color      = Color.Black
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text     = "Skills: ${listing.skillsNeeded ?: "-"}",
-                fontSize = 13.sp,
-                color    = Color.DarkGray
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text     = "Role: ${listing.role ?: "-"}",
-                fontSize = 13.sp,
-                color    = Color.DarkGray
-            )
+        Row(
+            modifier          = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text       = listing.projectName ?: "Untitled Project",
+                    fontWeight = FontWeight.Bold,
+                    fontSize   = 16.sp,
+                    color      = Color.Black
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text     = "Skills: ${listing.skillsNeeded ?: "-"}",
+                    fontSize = 13.sp,
+                    color    = Color.DarkGray
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text     = "Role: ${listing.role ?: "-"}",
+                    fontSize = 13.sp,
+                    color    = Color.DarkGray
+                )
+            }
+            IconButton(onClick = { showDeleteDialog = true }) {
+                Icon(
+                    imageVector        = Icons.Default.Delete,
+                    contentDescription = "Delete Listing",
+                    tint               = Color.Red.copy(alpha = 0.7f),
+                    modifier           = Modifier.size(22.dp)
+                )
+            }
         }
     }
 }
@@ -276,7 +398,6 @@ fun OtherListingCard(
                     color    = Color.LightGray
                 )
             }
-
             IconButton(
                 onClick  = onChatClick,
                 modifier = Modifier
