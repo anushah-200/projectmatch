@@ -85,7 +85,7 @@ fun AddListingScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ── Project Name ──────────────────────────────────────────────────
+
             Text(
                 text       = "Project Name",
                 fontWeight = FontWeight.SemiBold,
@@ -104,7 +104,7 @@ fun AddListingScreen(
                 )
             )
 
-            // ── Skills Needed ─────────────────────────────────────────────────
+
             Text(
                 text       = "Skills Needed",
                 fontWeight = FontWeight.SemiBold,
@@ -123,7 +123,7 @@ fun AddListingScreen(
                 )
             )
 
-            // ── Role Required ─────────────────────────────────────────────────
+
             Text(
                 text       = "Role Required",
                 fontWeight = FontWeight.SemiBold,
@@ -142,14 +142,13 @@ fun AddListingScreen(
                 )
             )
 
-            // ── Error message ─────────────────────────────────────────────────
-            errorMessage?.let {
+           errorMessage?.let {
                 Text(text = it, color = Color.Red, fontSize = 13.sp)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ── Submit button ─────────────────────────────────────────────────
+
             Button(
                 onClick = {
                     when {

@@ -38,15 +38,15 @@ fun WelcomeScreen( navHostController: NavHostController,authViewModel: AuthViewM
         Text(text = "Welcome to ProjectMatch", fontSize = 24.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(24.dp))
         Row {
-            Text(text = "Read our",color=Color.Gray)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "Privacy Policy", color = colorResource(id =R.color.sapphire))
-            Text(text = " Tap 'Agree and Continue'", color =Color.Gray)
-            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "Read our",color=Color.Gray,fontSize = 14.sp)
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = "Privacy Policy", color = colorResource(id =R.color.sapphire),fontSize = 14.sp)
+            Text(text = "Tap 'Agree and Continue'", color =Color.Gray,fontSize = 14.sp)
+            Spacer(modifier = Modifier.width(5.dp))
         }
         Row {
-            Text(text = "accept the ",color=Color.Gray)
-            Text(text = "Terms of Service", color = colorResource(id =R.color.sapphire))
+            Text(text = "accept the ",color=Color.Gray,fontSize = 14.sp)
+            Text(text = "Terms of Service", color = colorResource(id =R.color.sapphire),fontSize = 14.sp)
 
         }
         Spacer(modifier= Modifier.height(24.dp))
