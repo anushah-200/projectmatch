@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.igdtuw.projectmatch.R
 import com.igdtuw.projectmatch.models.Message
 import com.igdtuw.projectmatch.presentation.imageutils.ImageUtils
@@ -82,7 +82,7 @@ fun ChatScreen(
                             receiverImage?.let { ImageUtils.base64ToBitmap(it) }
                         }
                         Image(
-                            painter = if (bitmap != null) rememberImagePainter(bitmap)
+                            painter = if (bitmap != null) rememberAsyncImagePainter(bitmap)
                             else painterResource(R.drawable.user_placeholder),
                             contentDescription = null,
                             modifier = Modifier

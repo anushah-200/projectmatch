@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.igdtuw.projectmatch.R
 import com.igdtuw.projectmatch.presentation.imageutils.ImageUtils
 import com.igdtuw.projectmatch.presentation.viewmodel.BaseViewModel
@@ -41,7 +41,7 @@ fun ChatDesign(
     ) {
 
         Image(
-            painter = if (bitmap != null) rememberImagePainter(bitmap)
+            painter = if (bitmap != null) rememberAsyncImagePainter(bitmap)
             else painterResource(R.drawable.user_placeholder),
             contentDescription = null,
             modifier = Modifier
