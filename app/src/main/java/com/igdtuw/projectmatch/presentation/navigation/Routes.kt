@@ -32,9 +32,6 @@ sealed class Routes {
     data object CollaborateScreen : Routes()
 
     @Serializable
-    data object SettingScreen : Routes()
-
-    @Serializable
     data object AddListingScreen : Routes()
 
     @Serializable

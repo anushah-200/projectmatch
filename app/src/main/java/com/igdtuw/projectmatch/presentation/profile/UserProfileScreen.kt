@@ -58,7 +58,6 @@ fun UserProfileScreen(navHostController: NavHostController,authViewModel: AuthVi
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
     var bitmapImage by remember { mutableStateOf<Bitmap?>(null) }
 
-    val auth = FirebaseAuth.getInstance()
 
     val firebaseAuth= Firebase.auth
     val email = firebaseAuth.currentUser?.email?:""
