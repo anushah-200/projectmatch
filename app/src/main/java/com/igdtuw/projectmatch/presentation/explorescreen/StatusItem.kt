@@ -84,33 +84,4 @@ fun AddListings(){
     }
 }
 
-data class ListingData( val image : Int , val name: String, val list: String)
 
-@Composable
-
-fun Listings( listingData: ListingData){
-
-    Row(
-        modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-    ) {
-        Image(
-            painter = painterResource(id = listingData.image),
-            contentDescription = null,
-            modifier = Modifier.size(60.dp).clip(shape = CircleShape).padding(4.dp),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column() {
-            Text(text = listingData.name,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold)
-
-            Text(text = listingData.list,
-                fontSize = 14.sp,
-                color = Color.DarkGray,
-                fontWeight = FontWeight.Bold)
-
-        }
-    }
-}
