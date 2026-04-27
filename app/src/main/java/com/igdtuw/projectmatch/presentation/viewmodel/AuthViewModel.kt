@@ -71,11 +71,6 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-    fun signOut(){
-        auth.signOut()
-        _authState.value= AuthState.Unauthenticated
-    }
-
     fun saveUserProfile(
         name: String,
         skills: String,
