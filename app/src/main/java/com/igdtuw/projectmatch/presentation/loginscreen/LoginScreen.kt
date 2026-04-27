@@ -236,6 +236,3 @@ fun LoginScreenPreview() {
         onNavigateToSignUp = {}
     )
 }
-
-fun isValidEmail(email: String): Boolean
-{ return Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.endsWith("@igdtuw.ac.in") }
