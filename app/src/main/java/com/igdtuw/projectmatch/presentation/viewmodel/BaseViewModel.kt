@@ -169,43 +169,6 @@ class BaseViewModel @Inject constructor() : ViewModel() {
         reloadChats()
     }
 
-
-    fun fetchAllUsers() {
-        val currentUserId = auth.currentUser?.uid ?: return
-
-        db.child("users")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val users = mutableListOf<ChatListModel>()
-                    snapshot.children.forEach { child ->
-                        val uid = child.key ?: return@forEach
-                        if (uid == currentUserId) return@forEach
-
-                        val name         = child.child("name").value as? String ?: "Unknown"
-                        val email        = child.child("email").value as? String
-                        val skills       = child.child("skills").value as? String
-                        val profileImage = child.child("profileImage").value as? String
-
-                        users.add(
-                            ChatListModel(
-                                name         = name,
-                                userId       = uid,
-                                email        = email,
-                                profileImage = profileImage,
-                                message      = skills
-                            )
-                        )
-                    }
-                    _allUsers.value = users
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("BaseViewModel", "fetchAllUsers: ${error.message}")
-                }
-            })
-    }
-
-
     fun addListing(
         projectName  : String,
         skillsNeeded : String,
@@ -340,37 +303,6 @@ class BaseViewModel @Inject constructor() : ViewModel() {
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
-
-
-    fun fetchLastMessageForChat(
-        receiverId           : String,
-        onLastMessageFetched : (String, String) -> Unit
-    ) {
-        val senderId = auth.currentUser?.uid ?: return
-
-        db.child("messages")
-            .child(senderId)
-            .child(receiverId)
-            .orderByChild("timeStamp")
-            .limitToLast(1)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val last = snapshot.children.first()
-                        val msg  = last.child("message").value as? String ?: ""
-                        val time = last.child("timeStamp").value as? Long ?: 0L
-                        onLastMessageFetched(msg, formatTime(time))
-                    } else {
-                        onLastMessageFetched("", "--")
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    onLastMessageFetched("", "--")
-                }
-            })
-    }
-
 
     fun searchUserByEmail(email: String, callback: (ChatListModel?) -> Unit) {
         db.child("users")
